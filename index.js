@@ -2,19 +2,33 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const app = express();
+const { MONGO_DB_CONFIG } = require("./config/app.config");
+const error = require("./middleware/errors.js");
+const swaggerUi = require("swagger-ui-express"), swaggerDocument = require("./swagger.json");
 
-mongoose.connect('mongodb+srv://teera:Lover2ne1!@cluster0.tbdz2u3.mongodb.net/?retryWrites=true&w=majority');
 mongoose.Promise = global.Promise;
 
-app.use(express.json());
-
-//app.get('/api',(req,res) => res.send('API Working !!'));
-app.use('/api',require('./routes/api'));
-
-app.use(function(err,req,res,next){
-    res.status(422).send({error: err.message});
+mongoose.connect(MONGO_DB_CONFIG.DB, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
 })
+    .then(
+        () => {
+            console.log("Database Connected");
+        },
+        (error) => {
+            console.log("database can't be connected : " + error);
+        }
+    );
 
-app.listen(process.env.port || 4000, function() {
-    console.log('Now Listening for Requests');
+
+
+app.use(express.json());
+app.use("/uploads",express.static("uploads"));
+app.use('/api', require('./routes/api'));
+app.use(errors.errorHadler);
+app.use("/api-docs", swaggerUi.serve , swaggerUi.setup(swaggerDocument));
+
+app.listen(process.env.port || 4000, function () {
+    console.log('Ready to go!!');
 });
