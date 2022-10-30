@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 const app = express();
 const { MONGO_DB_CONFIG } = require("./config/app.config");
-const error = require("./middleware/errors.js");
+const errors = require("./middleware/errors.js");
 const swaggerUi = require("swagger-ui-express"), swaggerDocument = require("./swagger.json");
 
 mongoose.Promise = global.Promise;
