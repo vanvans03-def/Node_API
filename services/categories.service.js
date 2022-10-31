@@ -1,6 +1,5 @@
-const { response } = require("express");
+const { MONGO_DB_CONFIG } = require("../config/app.config");
 const { category } = require("../models/category.model");
-const { param } = require("../routes/api");
 
 async function createCategory(params,callback){
     if(!params.categoryName){

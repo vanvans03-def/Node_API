@@ -1,9 +1,9 @@
-const multer = requir("multer");
-const Path = requir("path");
+const multer = require("multer");
+const Path = require("path");
 
 const storage = multer.diskStorage({
     destination: function(req,file,cb){
-        cb(null,"./upload/categories");
+        cb(null,"./uploads/categories");
     },
     filename: function(req,file,cb){
         cb(null,Date.now() + "-" + file.originalname);

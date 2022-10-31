@@ -37,7 +37,7 @@ exports.findAll = (req, res, next) => {
         page: req.query.page,
     };
 
-    categoriesService.getCategory(model, (error, results) => {
+    categoriesService.getCategories(model, (error, results) => {
         if (error) {
             return next(error);
         } else {

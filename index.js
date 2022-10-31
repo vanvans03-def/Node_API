@@ -25,7 +25,7 @@ mongoose.connect(MONGO_DB_CONFIG.DB, {
 
 app.use(express.json());
 app.use("/uploads",express.static("uploads"));
-app.use('/api', require('./routes/api'));
+app.use('/api', require('./routes/app.routes'));
 app.use(errors.errorHadler);
 app.use("/api-docs", swaggerUi.serve , swaggerUi.setup(swaggerDocument));
 
