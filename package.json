@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Teera,Sapharat",
-  "license": "ISC",
+  "license": "vanvans03-def",
   "dependencies": {
     "express": "^4.18.1",
     "mongoose": "^6.6.1",
