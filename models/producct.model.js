@@ -46,13 +46,16 @@ const product = mongoose.model(
                     default: "IN"
                 }
             },
-            toJSON: {
-                tranform: function (doc, ret) {
-                    ret.productId = ret._id.toString();
-                    delete ret._id;
-                    delete ret._v;
+            {
+                toJSON: {
+                    tranform: function (doc, ret) {
+                        ret.productId = ret._id.toString();
+                        delete ret._id;
+                        delete ret._v;
+                    }
                 }
             }
+           
         )
 );
 
