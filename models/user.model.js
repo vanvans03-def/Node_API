@@ -1,7 +1,6 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-
-const user = mongoose.model{
+const user = mongoose.model(
     "User",
     mongoose.Schema(
         {
@@ -32,7 +31,7 @@ const user = mongoose.model{
         }, {
             timestamp: true
         })
-};
+);
 module.exports = {
     user
 }
