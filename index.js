@@ -5,6 +5,7 @@ const app = express();
 const { MONGO_DB_CONFIG } = require("./config/app.config");
 const errors = require("./middleware/errors.js");
 const swaggerUi = require("swagger-ui-express"), swaggerDocument = require("./swagger.json");
+const { category } = require('./models/category.model');
 
 mongoose.Promise = global.Promise;
 
