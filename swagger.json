@@ -37,7 +37,7 @@
     "paths": {
         "/api/register":{
             "post":{
-                "tags":["Users"],
+                "tags":["User"],
                 "summary":"Register API",
                 "parameters":[
                     {
@@ -64,7 +64,7 @@
         },
         "/api/login":{
             "post":{
-                "tags":["Users"],
+                "tags":["User"],
                 "summary":"Login API",
                 "parameters":[
                     {

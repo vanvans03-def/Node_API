@@ -1,17 +1,15 @@
 const { user } = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const auth = require("../middleware/auth");
+const { response } = require("express");
 
 async function login({ email, password }, callback) {
-    const userModel = await user.findOne({email}).select("+password")
-    console.log(userModel.email)
-   
-
+    const userModel = await user.find({ email });
 
     if (userModel != null) {
         if (bcrypt.compareSync(password, userModel.password)) {
             const token = auth.generateAccessToken(userModel.toJSON());
-            return callback(null, {...userModel.toJSON(), token });
+            return callback(null, { ...userModel.toJSON(), token });
         } else {
             return callback({
                 message: "Invalid Email/Password"
@@ -25,13 +23,13 @@ async function login({ email, password }, callback) {
 }
 
 async function register(params, callback) {
-    if (params.email === undefined) {
+    if (params.eamil == undefined) {
         return callback({
             message: "Email Reqired!"
-        });
+        })
     }
 
-    let isUserExist = await user.findOne({email:params.email});
+    let isUserExist = await user.findOne({email:params.eamil});
 
     if (isUserExist) {
         return callback({
