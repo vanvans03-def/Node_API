@@ -1,4 +1,4 @@
-const { product } = require("../models/producct.model");
+const { product } = require("../models/product.model");
 const { category } = require("../models/category.model");
 const { MONGO_DB_CONFIG } = require("../config/app.config");
 
@@ -49,7 +49,7 @@ async function getProducts(params, callback) {
 
     product
     .findById()
-    .find(condition, "producctId productName productShortDescriotion productPrice productSalePrice productImage productSKU productType stockStatus")
+    .find(condition, "productId productName productShortDescriotion productPrice productSalePrice productImage productSKU productType stockStatus")
     .limit(perPage)
     .skip(perPage * page)
     .then((response) => {
