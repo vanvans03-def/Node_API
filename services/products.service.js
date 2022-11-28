@@ -81,7 +81,7 @@ async function updateProduct(params, callback) {
     .findByIdAndUpdate(productId, params, { useFindAndModify:false})
     .then((response) => {
         if(!response) {
-        callback(`Cannot update Producct with id ${productId}`)
+        callback(`Cannot update Product with id ${productId}`)
         }
         else callback(null,response);
     })
@@ -97,7 +97,7 @@ async function deleteProduct(params, callback) {
     .findByIdAndRemove(productId)
     .then((response) => {
         if(!response) {
-        callback(`Cannot update Producct with id ${productId}`)
+        callback(`Cannot update Product with id ${productId}`)
         }
         else callback(null, response);
     })
