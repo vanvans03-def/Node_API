@@ -1,5 +1,6 @@
 const categoryController = require("../controllers/categories.controllers");
 const userController = require("../controllers/users.controller");
+const productController = require("../controllers/products.controller");
 const express = require("express");
 const router = express.Router();
 
