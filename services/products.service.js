@@ -19,7 +19,7 @@ async function createProduct(params, callback) {
         );
     }
 
-    const productModel = new Product(params);
+    const productModel = new product(params);
     productModel.save()   
         .then((response) => {
             return callback(null, response);
@@ -36,7 +36,7 @@ async function getProducts(params, callback) {
 
     if (productName) {
         condition["productName"] = {
-            $regex: new regExp(productName), $options: "i"
+            $regex: new RegExp(productName), $options: "i"
         };
     }
 
@@ -48,8 +48,8 @@ async function getProducts(params, callback) {
     let page = (Math.abs(params.page) || 1) - 1;
 
     product
-    .findById()
     .find(condition, "productId productName productShortDescriotion productPrice productSalePrice productImage productSKU productType stockStatus")
+    .populate("category", "categoryName categoryImage")
     .limit(perPage)
     .skip(perPage * page)
     .then((response) => {
