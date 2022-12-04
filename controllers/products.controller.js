@@ -8,10 +8,10 @@ exports.create = (req, res, next) => {
         }
         else {
             const path = 
-                req.file != undefined ? req.file.path.replace(/\\/g,"/") : "/";
+                req.file != undefined ? req.file.path.replace(/\\/g,"/") : "";
             
             var model = {
-                product: req.body.productName,
+                productName: req.body.productName,
                 category: req.body.category,
                 productShortDescription: req.body.productShortDescription,
                 productDescription: req.body.productDescription,
@@ -25,7 +25,7 @@ exports.create = (req, res, next) => {
             
             productService.createProduct(model, (error, results) => {
                 if (error) {
-                    return next(err);
+                    return next(error);
                 }
                 else {
                     return res.status(200).send({
@@ -90,7 +90,7 @@ exports.create = (req, res, next) => {
             
             var model = {
                 productId: req.param.id,
-                product: req.body.productName,
+                productName: req.body.productName,
                 category: req.body.category,
                 productShortDescription: req.body.productShortDescription,
                 productDescription: req.body.productDescription,
