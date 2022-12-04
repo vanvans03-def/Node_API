@@ -1,4 +1,4 @@
-const productService = require("../services/products.service");
+const productServices = require("../services/products.service");
 const upload = require("../middleware/product.upload");
 
 exports.create = (req, res, next) => {
@@ -8,7 +8,7 @@ exports.create = (req, res, next) => {
         }
         else {
             const path = 
-                req.file != undefined ? req.file.path.replace(/\\/g,"/") : "";
+                req.file != undefined ? req.file.path.replace(/\\/g, "/") : "";
             
             var model = {
                 productName: req.body.productName,
@@ -23,7 +23,7 @@ exports.create = (req, res, next) => {
                 productImage: path != "" ? "/" + path : ""
             }    
             
-            productService.createProduct(model, (error, results) => {
+            productServices.createProduct(model, (error, results) => {
                 if (error) {
                     return next(error);
                 }
@@ -46,9 +46,9 @@ exports.create = (req, res, next) => {
         page: req.query.page
     };
 
-    productService.getProducts(model, (error, results) => {
+    productServices.getProducts(model, (error, results) => {
         if (error) {
-            return next(err);
+            return next(error);
         }
         else {
             return res.status(200).send({
@@ -62,12 +62,12 @@ exports.create = (req, res, next) => {
 
  exports.findOne = (req, res, next) => {
     var model = {
-        productId: req.query.id,
+        productId: req.params.id,
     };
 
-    productService.getProductById(model, (error, results) => {
+    productServices.getProductById(model, (error, results) => {
         if (error) {
-            return next(err);
+            return next(error);
         }
         else {
             return res.status(200).send({
@@ -102,9 +102,9 @@ exports.create = (req, res, next) => {
                 productImage: path != "" ? "/" + path : ""
             }    
             
-            productService.updateProduct(model, (error, results) => {
+            productServices.updateProduct(model, (error, results) => {
                 if (error) {
-                    return next(err);
+                    return next(error);
                 }
                 else {
                     return res.status(200).send({
@@ -120,12 +120,12 @@ exports.create = (req, res, next) => {
 
 exports.delete = (req, res, next) => {
     var model = {
-        productId: req.query.id,
+        productId: req.params.id,
     };
 
-    productService.deleteProduct(model, (error, results) => {
+    productServices.deleteProduct(model, (error, results) => {
         if (error) {
-            return next(err);
+            return next(error);
         }
         else {
             return res.status(200).send({
