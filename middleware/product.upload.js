@@ -19,7 +19,7 @@ const fileFilter = (req, file, callback) => {
         return callback(new Error("Only .png, .jpg and .jpeg format allowed"));
     }
 
-    const filename = parseInt(req.headers["content-length"]);
+    const fileSize = parseInt(req.headers["content-length"]);
 
     if(fileSize > 1048576) {
         return callback(new Error("File Size Big"));
