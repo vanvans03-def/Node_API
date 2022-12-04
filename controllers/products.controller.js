@@ -46,7 +46,7 @@ exports.create = (req, res, next) => {
         page: req.query.page
     };
 
-    productService.getProduct(model, (error, results) => {
+    productService.getProducts(model, (error, results) => {
         if (error) {
             return next(err);
         }
