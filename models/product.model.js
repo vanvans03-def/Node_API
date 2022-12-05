@@ -56,9 +56,7 @@ const product = mongoose.model(
                         delete ret._v;
                     }
                 }
-            }
-           
-        )
+            })
 );
 
 module.exports = {

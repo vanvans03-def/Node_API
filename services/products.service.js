@@ -8,6 +8,7 @@ async function createProduct(params, callback) {
             {
                 message: "Product Name required",
             },
+            ""
         );
     }
 
@@ -15,7 +16,8 @@ async function createProduct(params, callback) {
         return callback(
             {
                 message: "Category required",
-            }
+            },
+            ""
         );
     }
 
@@ -78,7 +80,7 @@ async function updateProduct(params, callback) {
     const productId = params.productId;
     
     product
-    .findByIdAndUpdate(productId, params, { useFindAndModify:false})
+    .findByIdAndUpdate(productId, params, {useFindAndModify: false})
     .then((response) => {
         if(!response) {
         callback(`Cannot update Product with id ${productId}`)
