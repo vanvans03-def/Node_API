@@ -67,7 +67,7 @@ exports.create = (req, res, next) => {
 
     productService.getProductById(model, (error, results) => {
         if (error) {
-            return next(err);
+            return next(error);
         }
         else {
             return res.status(200).send({
