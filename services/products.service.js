@@ -78,13 +78,11 @@ async function getProductById(params, callback) {
 
 async function updateProduct(params, callback) {
     const productId = params.productId;
-    
+   
     product
     .findByIdAndUpdate(productId, params, {useFindAndModify: false})
     .then((response) => {
-        if(!response) {
-        callback(`Cannot update Product with id ${productId}`)
-        }
+        if(!response) callback('Cannot update Product with id ' + productId)
         else callback(null,response);
     })
     .catch((error) => {

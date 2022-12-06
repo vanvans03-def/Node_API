@@ -85,11 +85,10 @@ exports.create = (req, res, next) => {
             next(err);
         }
         else {
-            const path = 
-                req.file != undefined ? req.file.path.replace(/\\/g,"/") : "/";
+            const path = req.file != undefined ? req.file.path.replace(/\\/g, "/") : "";
             
             var model = {
-                productId: req.param.id,
+                productId: req.params.id,
                 productName: req.body.productName,
                 category: req.body.category,
                 productShortDescription: req.body.productShortDescription,
