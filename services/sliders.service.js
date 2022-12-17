@@ -1,10 +1,9 @@
 const { MONGO_DB_CONFIG } = require("../config/app.config");
-const { slider } = require("../models/slider.mode");
+const { slider } = require("../models/slider.model");
 
 async function createSlider(params, callback) {
     if(!params.sliderName) {
-        return callback(
-            {
+        return callback({
                 message: "Slider Name Required"
             });
     }
