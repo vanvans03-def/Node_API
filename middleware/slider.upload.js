@@ -10,7 +10,7 @@ const storage = multer.diskStorage({
     },
 });
 
-const fileFilter = (req, file, cb) => {
+const fileFilter = (req, file, callback) => {
     const fileExt = [".png", ".jpg"];
     if(!fileExt.includes(Path.extname(file.originalname))) {
         return callback(new Error("Invalid file type"));

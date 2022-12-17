@@ -46,7 +46,7 @@ exports.findAll = (req, res, next) => {
     });
 };
 
-exports.findAll = (req, res, next) => {
+exports.findOne = (req, res, next) => {
     var model ={
         sliderId: req.query.sliderName,
     };
@@ -90,7 +90,7 @@ exports.update = (req, res, next)=> {
     })
 };
 
-exports.findAll = (req, res, next) => {
+exports.delete = (req, res, next) => {
     var model ={
         sliderId: req.params.id,
     };
