@@ -11,10 +11,10 @@ async function createSlider(params, callback) {
     const model = new slider(params);
     model
         .save()
-        .then((response) =>{
+        .then((response) => {
             return callback(null, response);
         })
-        .catch((error) =>{
+        .catch((error) => {
             return callback(error);
         });
 }
@@ -23,7 +23,7 @@ async function getSliders(params, callback) {
     const sliderName = params.sliderName;
     var condition = sliderName ? { sliderName: {$regex: new RegExp(sliderName), $options: "i"}} : {};
 
-    let perPage = Math.abs(params.perSize) || MONGO_DB_CONFIG.pageSize;
+    let perPage = Math.abs(params.pageSize) || MONGO_DB_CONFIG.pageSize;
     let page = (Math.abs(params.page) || 1) - 1;
 
     slider
@@ -39,13 +39,13 @@ async function getSliders(params, callback) {
 }
 
 async function getSliderByID(params, callback) {
-    const sliderID = params.sliderID;
+    const sliderId = params.sliderId;
     
     slider
-    .findById(sliderID)
+    .findById(sliderId)
     .then((response) => {
         if(!response) callback("Not Found");
-        else callback(nuull, response);
+        else callback(null, response);
     })
     .catch((error) => {
         return callback(error);
@@ -53,10 +53,10 @@ async function getSliderByID(params, callback) {
 }
 
 async function updateSlider(params, callback) {
-    const sliderID = params.sliderID;
+    const sliderId = params.sliderId;
     
     slider
-    .findByIdAndUpdate(sliderID, params, {useFindAndModify: false})
+    .findByIdAndUpdate(sliderId, params, {useFindAndModify: false})
     .then((response) => {
         if(!response) callback("Not Found");
         else callback(null, response);
@@ -67,10 +67,10 @@ async function updateSlider(params, callback) {
 }
 
 async function deleteSlider(params, callback) {
-    const sliderID = params.sliderID;
+    const sliderId = params.sliderId;
     
     slider
-    .findByIdAndRemove(sliderID)
+    .findByIdAndRemove(sliderId)
     .then((response) => {
         if(!response) callback("Not Found");
         else callback(null, response);

@@ -2,8 +2,8 @@ const sliderService = require("../services/sliders.service");
 const upload = require("../middleware/slider.upload");
 
 exports.create = (req, res, next)=> {
-    upload(req, res, function (err){
-        if (err) {
+    upload(req, res, function(err){
+        if(err) {
             next(err);
         }
         else{
@@ -15,7 +15,7 @@ exports.create = (req, res, next)=> {
                 sliderImage: path != "" ? "/" + path : ""
             };
 
-            sliderService.createSlider(model, (error, results)=> {
+            sliderService.createSlider(model, (error, result)=> {
                 if (error) {
                     return next(error);
                 }
@@ -35,7 +35,7 @@ exports.findAll = (req, res, next) => {
         page: req.query.page
     };
 
-    sliderService.getSliders(model, (error, results) => {
+    sliderService.getSliders(model, (error, result) => {
         if (error) {    
             return next(error);
         }
@@ -48,10 +48,10 @@ exports.findAll = (req, res, next) => {
 
 exports.findOne = (req, res, next) => {
     var model ={
-        sliderId: req.query.sliderName,
+        sliderId: req.params.id,
     };
 
-    sliderService.getSliderByID(model, (error, results) => {
+    sliderService.getSliderByID(model, (error, result) => {
         if (error) {    
             return next(error);
         }
@@ -77,7 +77,7 @@ exports.update = (req, res, next)=> {
                 sliderImage: path != "" ? "/" + path : ""
             };
 
-            sliderService.updateSlider(model, (error, results)=> {
+            sliderService.updateSlider(model, (error, result)=> {
                 if (error) {
                     return next(error);
                 }
