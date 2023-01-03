@@ -29,7 +29,7 @@ exports.create = (req, res, next) => {
 };
 
 
-exports.findAll = (req, res, next) => {
+exports.findAll = (req, res, next) => {     
 
     var model = {
         categoryName: req.query.categoryName,
