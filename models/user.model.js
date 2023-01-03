@@ -17,15 +17,20 @@ const user = mongoose.model(
                 type: String,
                 required: true
             }
-            /*, phoneNumber:{
+            , phoneNumber:{
                  type:String,
-                 required:true,
-                 unique:true
+                 default: "",
+                 /*required:true,
+                 unique:true*/
              },
              address:{
                  type:String,
-                 required:true
-             }*/
+                 default: "",
+             },type:{
+                type:String,
+                default: "user",
+                
+             }
         },
         {
             toJSON: {
