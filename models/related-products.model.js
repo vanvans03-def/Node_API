@@ -1,4 +1,3 @@
-const { redirect } = require("express/lib/response");
 const mongoose = require("mongoose"); 
 
 const relatedProduct = mongoose.model(

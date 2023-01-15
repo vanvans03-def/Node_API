@@ -52,6 +52,7 @@ async function getProducts(params, callback) {
     product
     .find(condition, "productId productName productShortDescriotion productPrice productSalePrice productImage productSKU productType stockStatus")
     .populate("category", "categoryName categoryImage")
+    .populate("relatedroducts", "relatedProduct")
     .limit(perPage)
     .skip(perPage * page)
     .then((response) => {
