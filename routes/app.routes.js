@@ -27,6 +27,7 @@ router.get("/slider/:id",sliderController.findOne);
 router.put("/slider/:id",sliderController.update);
 router.delete("/slider/:id",sliderController.delete);
 
-router.post("/relateProduct/:id", relateProductController.delete);
+router.post("/relateProduct", relateProductController.create);
+router.delete("/relateProduct/:id", relateProductController.delete);
 
 module.exports = router;
