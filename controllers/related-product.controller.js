@@ -1,4 +1,4 @@
-const relatedProductService = requir("../services/related-products.services");
+/*const relatedProductService = requir("../services/related-products.services");
 
 exports.create = (req, res, next) => {
     relatedProductService.addRelatedProduct(req.body, (error, result) => {
@@ -28,4 +28,4 @@ exports.delete = (req, res, next) => {
             });
         }
     });
- }
+ }*/

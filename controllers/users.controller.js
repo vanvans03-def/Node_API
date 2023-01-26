@@ -25,3 +25,15 @@ exports.login = (req, res, next) => {
         });
     });
 }
+
+exports.getUserData = (req, res, next) => {
+    userService.getUserData(req.user._id, (error, results) => {
+        if (error) {
+            return next(error);
+        }
+        return res.status(200).send({
+            message: "Success",
+            data: results
+        });
+    });
+}

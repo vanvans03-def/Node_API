@@ -51,7 +51,18 @@ async function register(params, callback) {
         });
 }
 
+async function getUserData(userId, callback) {
+    try {
+        const userData = await user.findById(userId);
+        return callback(null, userData);
+    } catch (error) {
+        return callback(error);
+    }
+}
+
+
 module.exports = {
     login,
-    register
+    register,
+    getUserData
 }

@@ -5,6 +5,7 @@ const sliderController = require("../controllers/slider.controller");
 const relatedProductController = require("../controllers/related-product.controller")
 const express = require("express");
 const router = express.Router();
+const authMiddleware = require("../middleware/auth");
 
 router.post("/category",categoryController.create);
 router.get("/category",categoryController.findAll);
@@ -14,6 +15,9 @@ router.delete("/category/:id",categoryController.delete);
 
 router.post("/register",userController.register);
 router.post("/login",userController.login);
+router.get("/userData", authMiddleware.authenticationToken, 
+userController.getUserData);
+
 
 router.post("/product",productController.create);
 router.get("/product",productController.findAll);
@@ -26,8 +30,8 @@ router.get("/slider",sliderController.findAll);
 router.get("/slider/:id",sliderController.findOne);
 router.put("/slider/:id",sliderController.update);
 router.delete("/slider/:id",sliderController.delete);
-
+/*
 router.post("/relateProduct", relateProductController.create);
 router.delete("/relateProduct/:id", relateProductController.delete);
-
+*/
 module.exports = router;
