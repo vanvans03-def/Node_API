@@ -24,7 +24,7 @@ mongoose.connect(MONGO_DB_CONFIG.DB, {
 
 app.get("/hello-world",(req , res) => {
     res.json({
-        hi:"hello world",
+        hi:"hello world123",
         des:"des"
     });
 })
