@@ -21,13 +21,13 @@ mongoose.connect(MONGO_DB_CONFIG.DB, {
             console.log("database can't be connected : " + error);
         }
     );
-
+/*
 app.get("/hello-world",(req , res) => {
     res.json({
         hi:"hello world",
         des:"des"
     });
-})
+})*/
 
 app.use(express.json());
 app.use("/uploads",express.static("uploads"));
