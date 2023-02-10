@@ -15,8 +15,7 @@ router.delete("/category/:id",categoryController.delete);
 
 router.post("/register",userController.register);
 router.post("/login",userController.login);
-router.get("/userData", authMiddleware.authenticationToken, 
-userController.getUserData);
+
 
 
 router.post("/product",productController.create);
@@ -25,12 +24,13 @@ router.get("/product/:id",productController.findOne);
 router.put("/product/:id",productController.update);
 router.delete("/product/:id",productController.delete);
 
+/*
 router.post("/slider",sliderController.create);
 router.get("/slider",sliderController.findAll);
 router.get("/slider/:id",sliderController.findOne);
 router.put("/slider/:id",sliderController.update);
 router.delete("/slider/:id",sliderController.delete);
-/*
+
 router.post("/relateProduct", relateProductController.create);
 router.delete("/relateProduct/:id", relateProductController.delete);
 */

@@ -3,23 +3,25 @@ const bcrypt = require("bcryptjs");
 const auth = require("../middleware/auth");
 
 async function login({ email, password }, callback) {
-    try {
-        const userModel = await user.findOne({ email }).select("+password");
-        if (userModel != null) {
-            if (bcrypt.compareSync(password, userModel.password)) {
-                const token = auth.generateAccessToken(userModel.toJSON());
-                return callback(null, { ...userModel.toJSON(), token });
-            } else {
-                return callback({ message: "Invalid Email/Password" });
-            }
+    const userModel = await user.findOne({email}).select("+password")
+   
+
+
+    if (userModel != null) {
+        if (bcrypt.compareSync(password, userModel.password)) {
+            const token = auth.generateAccessToken(userModel.toJSON());
+            return callback(null, {...userModel.toJSON(), token });
         } else {
-            return callback({ message: "Invalid Email/Password" });
+            return callback({
+                message: "Invalid Email/Password"
+            });
         }
-    } catch (error) {
-        return callback(error);
+    } else {
+        return callback({
+            message: "Invalid Email/Password"
+        });
     }
 }
-
 
 async function register(params, callback) {
     if (params.email === undefined) {
@@ -35,6 +37,7 @@ async function register(params, callback) {
             message: "Email already registered!"
         });
     }
+
     const salt = bcrypt.genSaltSync(10);
     params.password = bcrypt.hashSync(params.password, salt);
 
@@ -48,18 +51,7 @@ async function register(params, callback) {
         });
 }
 
-async function getUserData(userId, callback) {
-    try {
-        const userData = await user.findById(userId);
-        return callback(null, userData);
-    } catch (error) {
-        return callback(error);
-    }
-}
-
-
 module.exports = {
     login,
-    register,
-    getUserData
+    register
 }
