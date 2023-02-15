@@ -30,7 +30,7 @@ exports.create = (req, res, next) => {
                 else {
                     return res.status(200).send({
                         message: "Success",
-                        date: results
+                        data: results
                     });
                 }
             });
@@ -53,7 +53,7 @@ exports.create = (req, res, next) => {
         else {
             return res.status(200).send({
                 message: "Success",
-                date: results
+                data: results
             });
         }
     });
@@ -72,7 +72,7 @@ exports.create = (req, res, next) => {
         else {
             return res.status(200).send({
                 message: "Success",
-                date: results
+                data: results
             });
         }
     });
@@ -108,7 +108,7 @@ exports.create = (req, res, next) => {
                 else {
                     return res.status(200).send({
                         message: "Success",
-                        date: results
+                        data: results
                     });
                 }
             });
@@ -129,7 +129,7 @@ exports.delete = (req, res, next) => {
         else {
             return res.status(200).send({
                 message: "Success",
-                date: results
+                data: results
             });
         }
     });
