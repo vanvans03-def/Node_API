@@ -50,9 +50,8 @@ async function getProducts(params, callback) {
     let page = (Math.abs(params.page) || 1) - 1;
 
     product
-    .find(condition, "productId productName productShortDescriotion productPrice productSalePrice productImage productSKU productType stockStatus")
+    .find(condition, "productName productShortDescriotion productPrice productSalePrice productImage productSKU productType stockStatus")
     .populate("category", "categoryName categoryImage")
-    .populate("relatedProducts", "relatedProduct")
     .limit(perPage)
     .skip(perPage * page)
     .then((response) => {
