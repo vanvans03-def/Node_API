@@ -98,7 +98,8 @@ exports.create = (req, res, next) => {
                 productSKU: req.body.productSKU,
                 productType: req.body.productType,
                 stockStatus: req.body.stockStatus,
-                productImage: path != "" ? "/" + path : ""
+               // productImage: path != "" ? "/" + path : ""
+                productImage: req.body.productImage,
             }    
             
             productServices.updateProduct(model, (error, results) => {
