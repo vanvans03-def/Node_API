@@ -33,7 +33,7 @@ router.get("/registerstore/:id",registerstoreController.findOne);
 router.put("/registerstore/:id",registerstoreController.update);
 router.delete("/registerstore/:id",registerstoreController.delete);
 
-
+ 
  
 
 /*
