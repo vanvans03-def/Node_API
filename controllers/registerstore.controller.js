@@ -12,8 +12,8 @@ exports.create = (req, res, next) => {
 
             var model = {
                 Storename: req.body.Storename,
-                StoreImage: path != "" ? "/" + path : "",
-                //StoreImage: req.body.StoreImage,
+                //StoreImage: path != "" ? "/" + path : "",
+                StoreImage: req.body.StoreImage,
                 //Banner: path != "" ? "/" + path : "",
                 Banner: req.body.Banner,                
                 StoreDescription: req.body.StoreDescription,

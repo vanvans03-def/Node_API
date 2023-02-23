@@ -10,10 +10,10 @@ const registerstore = mongoose.model(
             },
             StoreImage: {
                 type: String
+
             },
             Banner: { 
-                type: String ,
-                required: true
+                type: String  
             },
             //first_name: { 
                 //type: String, 
