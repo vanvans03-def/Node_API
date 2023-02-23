@@ -34,7 +34,7 @@ router.put("/registerstore/:id",registerstoreController.update);
 router.delete("/registerstore/:id",registerstoreController.delete);
 
 
-
+ 
 
 /*
 router.post("/slider",sliderController.create);
