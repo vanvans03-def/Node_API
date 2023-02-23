@@ -1,6 +1,7 @@
 const categoryController = require("../controllers/categories.controllers");
 const userController = require("../controllers/users.controller");
 const productController = require("../controllers/products.controller");
+const registerstoreController = require("../controllers/registerstore.controller");
 const sliderController = require("../controllers/slider.controller");
 const relatedProductController = require("../controllers/related-product.controller")
 const express = require("express");
@@ -23,6 +24,17 @@ router.get("/product",productController.findAll);
 router.get("/product/:id",productController.findOne);
 router.put("/product/:id",productController.update);
 router.delete("/product/:id",productController.delete);
+
+
+
+router.post("/registerstore",registerstoreController.create);
+router.get("/registerstore",registerstoreController.findAll);
+router.get("/registerstore/:id",registerstoreController.findOne);
+router.put("/registerstore/:id",registerstoreController.update);
+router.delete("/registerstore/:id",registerstoreController.delete);
+
+
+
 
 /*
 router.post("/slider",sliderController.create);
