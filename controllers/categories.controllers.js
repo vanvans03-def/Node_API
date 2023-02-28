@@ -20,7 +20,7 @@ exports.create = (req, res, next) => {
                 } else {
                     return res.status(200).send({
                         message: "Success",
-                        date: results,
+                        data: results,
                     });
                 }
             });
@@ -43,7 +43,7 @@ exports.findAll = (req, res, next) => {
         } else {
             return res.status(200).send({
                 message: "Success",
-                date: results,
+                data: results,
             });
         }
     });
@@ -62,7 +62,7 @@ exports.findOne = (req, res, next) => {
         } else {
             return res.status(200).send({
                 message: "Success",
-                date: results,
+                data: results,
             });
         }
     });
@@ -88,7 +88,7 @@ exports.update = (req, res, next) => {
                 } else {
                     return res.status(200).send({
                         message: "Success",
-                        date: results,
+                        data: results,
                     });
                 }
             });
@@ -109,7 +109,7 @@ exports.delete = (req, res, next) => {
         } else {
             return res.status(200).send({
                 message: "Success",
-                date: results,
+                data: results,
             });
         }
     });
