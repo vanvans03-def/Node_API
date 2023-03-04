@@ -12,9 +12,9 @@ const category = mongoose.model(
             type: String,
             required: false
         },
-        categoryImage: [{
+        categoryImage: {
             type: String,
-        }],
+        },
         },
         {
             toJSON: {
