@@ -11,7 +11,8 @@ exports.create = (req, res, next) => {
             var model = {
                 categoryName: req.body.categoryName,
                 categoryDescription: req.body.categoryDescription,
-                categoryImage: path != "" ? "/" + path : "",
+                categoryImage: req.body.categoryImage
+                //categoryImage: path != "" ? "/" + path : "",
             };
 
             categoriesService.createCategory(model, (error, results) => {
@@ -79,7 +80,8 @@ exports.update = (req, res, next) => {
                 categoryId: req.params.id,
                 categoryName: req.body.categoryName,
                 categoryDescription: req.body.categoryDescription,
-                categoryImage: path != "" ? "/" + path : "",
+                //categoryImage: path != "" ? "/" + path : "",
+                categoryImage: req.body.categoryImage
             };
 
             categoriesService.updateCategory(model, (error, results) => {
