@@ -136,14 +136,17 @@ exports.delete = (req, res, next) => {
     });
  }
 
- exports.searchProduct = async (req, res) => {
+ exports.searchProduct = async (req, res, next) => {
     try {
       const keyword = req.params.productName;
-      const response = await productServices.searchProducts(keyword);
-      res.status(200).json(response);
+      const products = await productServices.searchProducts(keyword);
+  
+      return res.status(200).send({
+        message: "Success",
+        data: products,
+      });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Server Error" });
+      return next(error);
     }
   };
   
