@@ -18,12 +18,13 @@ router.post("/register",userController.register);
 router.post("/login",userController.login);
 
 
-
+router.get('/product/search/:productName', productController.searchProduct);
 router.post("/product",productController.create);
 router.get("/product",productController.findAll);
 router.get("/product/:id",productController.findOne);
 router.put("/product/:id",productController.update);
 router.delete("/product/:id",productController.delete);
+
 
 
 
@@ -34,7 +35,7 @@ router.put("/registerstore/:id",registerstoreController.update);
 router.delete("/registerstore/:id",registerstoreController.delete);
 
  
- 
+
 
 /*
 router.post("/slider",sliderController.create);

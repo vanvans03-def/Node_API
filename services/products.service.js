@@ -106,10 +106,23 @@ async function deleteProduct(params, callback) {
     });
 }
 
+async function searchProducts(productName) {
+    const match = {
+      $or: [
+        { productName: new RegExp(productName, "i") },
+        { productShortDescription: new RegExp(productName, "i") },
+      ],
+    };
+    return product.aggregate([{ $match: match }]);
+  }
+  
+  
+  
 module.exports = {
     createProduct,
     getProducts,
     getProductById,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    searchProducts
 }
