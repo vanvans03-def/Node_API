@@ -50,7 +50,7 @@ async function getProducts(params, callback) {
     let page = (Math.abs(params.page) || 1) - 1;
 
     product
-    .find(condition, "productName category productShortDescriotion productPrice productSalePrice productImage productSKU productType stockStatus")
+    .find(condition, "productName category productShortDescription productDescription productPrice productSalePrice productImage productSKU productType stockStatus")
     //.populate("category", "categoryName categoryImage")
     .limit(perPage)
     .skip(perPage * page)
@@ -113,10 +113,27 @@ async function searchProducts(productName) {
         { productShortDescription: new RegExp(productName, "i") },
       ],
     };
-    return product.aggregate([{ $match: match }]);
+  
+    const pipeline = [
+      { $match: match },
+      {
+        $project: {
+          productName: 1,
+          category: 1,
+          productShortDescription: 1,
+          productDescription: 1,
+          productPrice: 1,
+          productSalePrice: 1,
+          productImage: 1,
+          productSKU: 1,
+          productType: 1,
+          stockStatus: 1,
+        },
+      },
+    ];
+  
+    return product.aggregate(pipeline);
   }
-  
-  
   
 module.exports = {
     createProduct,
