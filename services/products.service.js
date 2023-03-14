@@ -135,11 +135,11 @@ async function searchProducts(productName) {
     return product.aggregate(pipeline);
   }
 
-  async function rateProduct(productId, userId, rating) {
-    let product = await productModel.findById(productId);
-    for (let i = 0; i < product.ratings.length; i++) {
-        if (product.ratings[i].userId == userId) {
-            product.ratings.splice(i, 1);
+  async function rateProduct(params, callback) {
+    let productModel = await product.findById(params.productId);
+    for (let i = 0; i < productModel.ratings.length; i++) {
+        if (productModel.ratings[i].userId == params.userId) {
+            productModel.ratings.splice(i, 1);
             break;
         }
     }
@@ -149,9 +149,9 @@ async function searchProducts(productName) {
         rating: rating,
     };
 
-    product.ratings.push(ratingSchema);
-    product = await product.save();
-    return product;
+    productModel.ratings.push(ratingSchema);
+    productModel = await productModel.save();
+    return productModel;
 }
 
   
