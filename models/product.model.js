@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const ratingSchema = require("./rating");
 const product = mongoose.model(
     "Product",
     mongoose.Schema(
@@ -50,7 +51,8 @@ const product = mongoose.model(
                     type: mongoose.Schema.Types.ObjectId,
                     ref: "RelatedProduct"
                 }
-            ]
+            ],
+            ratings:[ratingSchema]
 
         },
         {

@@ -8,6 +8,7 @@ const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middleware/auth");
 
+
 router.post("/category",categoryController.create);
 router.get("/category",categoryController.findAll);
 router.get("/category/:id",categoryController.findOne);
@@ -24,6 +25,7 @@ router.get("/product",productController.findAll);
 router.get("/product/:id",productController.findOne);
 router.put("/product/:id",productController.update);
 router.delete("/product/:id",productController.delete);
+router.post('/rate-product', productController.rateProduct);
 
 
 
@@ -34,7 +36,6 @@ router.get("/registerstore/:id",registerstoreController.findOne);
 router.put("/registerstore/:id",registerstoreController.update);
 router.delete("/registerstore/:id",registerstoreController.delete);
 
- 
 
 
 /*

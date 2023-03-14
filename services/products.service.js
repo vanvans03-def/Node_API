@@ -134,6 +134,26 @@ async function searchProducts(productName) {
   
     return product.aggregate(pipeline);
   }
+
+  async function rateProduct(productId, userId, rating) {
+    let product = await productModel.findById(productId);
+    for (let i = 0; i < product.ratings.length; i++) {
+        if (product.ratings[i].userId == userId) {
+            product.ratings.splice(i, 1);
+            break;
+        }
+    }
+
+    const ratingSchema = {
+        userId: userId,
+        rating: rating,
+    };
+
+    product.ratings.push(ratingSchema);
+    product = await product.save();
+    return product;
+}
+
   
 module.exports = {
     createProduct,
@@ -141,5 +161,8 @@ module.exports = {
     getProductById,
     updateProduct,
     deleteProduct,
-    searchProducts
+    searchProducts,
+    rateProduct
 }
+
+
