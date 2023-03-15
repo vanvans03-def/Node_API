@@ -1,5 +1,6 @@
 const productServices = require("../services/products.service");
 const upload = require("../middleware/product.upload");
+const { authenticationToken } = require('../middleware/auth');
 
 exports.create = (req, res, next) => {
     upload(req, res, function (err) {
@@ -151,15 +152,19 @@ exports.searchProduct = async (req, res, next) => {
 };
 
 exports.rateProduct = (req, res, next) => {
-    const { id, rating } = req.body;
-    const userId = req.user;
-
-    productServices.rateProduct(id, userId, rating)
-        .then((product) => {
-            res.json(product);
-        })
-        .catch((error) => {
-            res.status(500).json({ error: error.message });
+    const productId = req.params.productId;
+    const userId = req.user._id;
+    const rating = req.body.rating;
+  
+    productServices.rateProduct(productId, userId, rating)
+      .then((product) => {
+        res.status(200).send({
+          message: "Rating updated successfully",
+          data: product,
         });
-};
-
+      })
+      .catch((error) => {
+        next(error);
+      });
+  };
+  

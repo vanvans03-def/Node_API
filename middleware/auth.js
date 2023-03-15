@@ -8,9 +8,9 @@ function authenticationToken(req, res, next) {
 
     if (token == null) return res.sendStatus(401);
 
-    jwt.verify(token, TOKEN_KEY, (err, user) => {
+    jwt.verify(token, TOKEN_KEY, (err, decoded) => {
         if (err) return res.sendStatus(403);
-        req.user = user;
+        req.user = decoded.data;
         next();
     });
 }

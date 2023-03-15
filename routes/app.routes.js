@@ -25,8 +25,9 @@ router.get("/product",productController.findAll);
 router.get("/product/:id",productController.findOne);
 router.put("/product/:id",productController.update);
 router.delete("/product/:id",productController.delete);
-router.post('/rate-product', productController.rateProduct);
 
+
+router.put('/product/rate-product/:id', authMiddleware.authenticationToken, productController.rateProduct);
 
 
 
