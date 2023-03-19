@@ -134,26 +134,29 @@ async function searchProducts(productName) {
   
     return product.aggregate(pipeline);
   }
-
   async function rateProduct(productId, userId, rating) {
     try {
-      let products = await  product.findById(productId)
-      
-      for (let i = 0; i < products.ratings.length; i++) {
-        if (products.ratings[i].userId == userId) {
-            products.ratings.splice(i, 1);
+      let product = await product.findById(productId);
+     
+      if (!product) {
+        throw new Error(`Product with ID ${productId} not found`);
+      }else{
+    
+      for (let i = 0; i < product.ratings.length; i++) {
+        if (product.ratings[i].userId == userId) {
+          product.ratings.splice(i, 1);
           break;
         }
-      }
-  
+      }}
+    
       const ratingSchema = {
         userId,
         rating,
       };
-  
-      products.ratings.push(ratingSchema);
-      products = await products.save();
-      return products;
+    
+      product.ratings.push(ratingSchema);
+      product = await product.save();
+      return product;
     } catch (error) {
       throw error;
     }

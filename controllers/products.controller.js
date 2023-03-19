@@ -150,11 +150,9 @@ exports.searchProduct = async (req, res, next) => {
         return next(error);
     }
 };
-
 exports.rateProduct = (req, res, next) => {
-    const productId = req.params.productId;
+    const { productId, rating } = req.body;
     const userId = req.user._id;
-    const rating = req.body.rating;
   
     productServices.rateProduct(productId, userId, rating)
       .then((product) => {

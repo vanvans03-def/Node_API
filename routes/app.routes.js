@@ -25,9 +25,8 @@ router.get("/product",productController.findAll);
 router.get("/product/:id",productController.findOne);
 router.put("/product/:id",productController.update);
 router.delete("/product/:id",productController.delete);
-
-
-
+router.post("/rate-product", authenticationToken, productController.rateProduct);
+  
 
 router.post("/registerstore",registerstoreController.create);
 router.get("/registerstore",registerstoreController.findAll);
@@ -47,8 +46,8 @@ router.delete("/slider/:id",sliderController.delete);
 router.post("/relateProduct", relateProductController.create);
 router.delete("/relateProduct/:id", relateProductController.delete);
 */
-
-router.post("/api/rate-product", authenticationToken, async (req, res) => {
+/*
+router.post("/rate-product", authenticationToken, async (req, res) => {
     try {
       const { id, rating } = req.body;
       let product = await Product.findById(id);
@@ -70,6 +69,6 @@ router.post("/api/rate-product", authenticationToken, async (req, res) => {
     } catch (e) {
       res.status(500).json({ error: e.message });
     }
-  });
+  });*/
   
 module.exports = router;
