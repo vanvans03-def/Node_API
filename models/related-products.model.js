@@ -4,6 +4,7 @@ const relatedProduct = mongoose.model(
     "RelatedProduct",
     mongoose.Schema(
         {
+            
             product: { 
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "Product"
