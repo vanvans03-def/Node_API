@@ -1,15 +1,16 @@
 const productServices = require("../services/products.service");
 const upload = require("../middleware/product.upload");
+const { authenticationToken } = require('../middleware/auth');
 
 exports.create = (req, res, next) => {
-    upload(req, res, function (err){
+    upload(req, res, function (err) {
         if (err) {
             next(err);
         }
         else {
-            const path = 
+            const path =
                 req.file != undefined ? req.file.path.replace(/\\/g, "/") : "";
-            
+
             var model = {
                 productName: req.body.productName,
                 category: req.body.category,
@@ -21,8 +22,8 @@ exports.create = (req, res, next) => {
                 productType: req.body.productType,
                 stockStatus: req.body.stockStatus,
                 productImage: req.body.productImage,
-            }    
-            
+            }
+
             productServices.createProduct(model, (error, results) => {
                 if (error) {
                     return next(error);
@@ -38,7 +39,7 @@ exports.create = (req, res, next) => {
     });
 }
 
- exports.findAll = (req, res, next) => {
+exports.findAll = (req, res, next) => {
     var model = {
         productName: req.query.productName,
         categoryId: req.query.categoryId,
@@ -57,10 +58,10 @@ exports.create = (req, res, next) => {
             });
         }
     });
- }
+}
 
 
- exports.findOne = (req, res, next) => {
+exports.findOne = (req, res, next) => {
     var model = {
         productId: req.params.id,
     };
@@ -76,17 +77,17 @@ exports.create = (req, res, next) => {
             });
         }
     });
- }
+}
 
 
- exports.update = (req, res, next) => {
-    upload(req, res, function (err){
+exports.update = (req, res, next) => {
+    upload(req, res, function (err) {
         if (err) {
             next(err);
         }
         else {
             const path = req.file != undefined ? req.file.path.replace(/\\/g, "/") : "";
-            
+
             var model = {
                 productId: req.params.id,
                 productName: req.body.productName,
@@ -98,10 +99,10 @@ exports.create = (req, res, next) => {
                 productSKU: req.body.productSKU,
                 productType: req.body.productType,
                 stockStatus: req.body.stockStatus,
-               // productImage: path != "" ? "/" + path : ""
+                // productImage: path != "" ? "/" + path : ""
                 productImage: req.body.productImage,
-            }    
-            
+            }
+
             productServices.updateProduct(model, (error, results) => {
                 if (error) {
                     return next(error);
@@ -134,19 +135,34 @@ exports.delete = (req, res, next) => {
             });
         }
     });
- }
+}
 
- exports.searchProduct = async (req, res, next) => {
+exports.searchProduct = async (req, res, next) => {
     try {
-      const keyword = req.params.productName;
-      const products = await productServices.searchProducts(keyword);
-  
-      return res.status(200).send({
-        message: "Success",
-        data: products,
-      });
+        const keyword = req.params.productName;
+        const products = await productServices.searchProducts(keyword);
+
+        return res.status(200).send({
+            message: "Success",
+            data: products,
+        });
     } catch (error) {
-      return next(error);
+        return next(error);
     }
+};
+exports.rateProduct = (req, res, next) => {
+    const { productId, rating } = req.body;
+    const userId = req.user._id;
+  
+    productServices.rateProduct(productId, userId, rating)
+      .then((product) => {
+        res.status(200).send({
+          message: "Rating updated successfully",
+          data: product,
+        });
+      })
+      .catch((error) => {
+        next(error);
+      });
   };
   

@@ -134,6 +134,34 @@ async function searchProducts(productName) {
   
     return product.aggregate(pipeline);
   }
+  async function rateProduct(productId, userId, rating) {
+    try {
+      let product = await product.findById(productId);
+     
+      if (!product) {
+        throw new Error(`Product with ID ${productId} not found`);
+      }else{
+    
+      for (let i = 0; i < product.ratings.length; i++) {
+        if (product.ratings[i].userId == userId) {
+          product.ratings.splice(i, 1);
+          break;
+        }
+      }}
+    
+      const ratingSchema = {
+        userId,
+        rating,
+      };
+    
+      product.ratings.push(ratingSchema);
+      product = await product.save();
+      return product;
+    } catch (error) {
+      throw error;
+    }
+  }
+  
   
 module.exports = {
     createProduct,
@@ -141,5 +169,8 @@ module.exports = {
     getProductById,
     updateProduct,
     deleteProduct,
-    searchProducts
+    searchProducts,
+    rateProduct
 }
+
+
