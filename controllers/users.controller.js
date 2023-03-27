@@ -25,3 +25,25 @@ exports.login = (req, res, next) => {
         });
     });
 }
+
+
+
+exports.addToCart = async (req, res, next) => {
+    try {
+        const { id } = req.body;
+        const user = await userService.addToCart(req.user, id);
+        res.json(user);
+    } catch (e) {
+        next(e);
+    }
+};
+
+exports.removeFromCart = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const user = await userService.removeFromCart(req.user, id);
+        res.json(user);
+    } catch (e) {
+        next(e);
+    }
+};

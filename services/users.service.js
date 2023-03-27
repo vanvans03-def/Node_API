@@ -1,6 +1,7 @@
 const { user } = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const auth = require("../middleware/auth");
+const { Product } = require("../models/product.model");
 
 async function login({ email, password }, callback) {
     const userModel = await user.findOne({email}).select("+password")
@@ -51,7 +52,62 @@ async function register(params, callback) {
         });
 }
 
+
+async function addToCart(userId, productId) {
+    try {
+      const product = await Product.findById(productId);
+      let user = await user.findById(userId);
+  
+      if (user.cart.length == 0) {
+        user.cart.push({ product, quantity: 1 });
+      } else {
+        let isProductFound = false;
+        for (let i = 0; i < user.cart.length; i++) {
+          if (user.cart[i].product._id.equals(product._id)) {
+            isProductFound = true;
+          }
+        }
+  
+        if (isProductFound) {
+          let producttt = user.cart.find((productt) =>
+            productt.product._id.equals(product._id)
+          );
+          producttt.quantity += 1;
+        } else {
+          user.cart.push({ product, quantity: 1 });
+        }
+      }
+      user = await user.save();
+      return user;
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  }
+  
+  async function removeFromCart(userId, productId) {
+    try {
+      const product = await Product.findById(productId);
+      let user = await user.findById(userId);
+  
+      for (let i = 0; i < user.cart.length; i++) {
+        if (user.cart[i].product._id.equals(product._id)) {
+          if (user.cart[i].quantity == 1) {
+            user.cart.splice(i, 1);
+          } else {
+            user.cart[i].quantity -= 1;
+          }
+        }
+      }
+      user = await user.save();
+      return user;
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  }
+  
 module.exports = {
     login,
-    register
+    register,
+    addToCart,
+    removeFromCart
 }
