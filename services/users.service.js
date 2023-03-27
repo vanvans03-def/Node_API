@@ -1,10 +1,10 @@
-const { user } = require("../models/user.model");
+const { User } = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const auth = require("../middleware/auth");
 const { Product } = require("../models/product.model");
 
 async function login({ email, password }, callback) {
-    const userModel = await user.findOne({email}).select("+password")
+    const userModel = await User.findOne({email}).select("+password")
    
 
 
@@ -31,7 +31,7 @@ async function register(params, callback) {
         });
     }
 
-    let isUserExist = await user.findOne({email:params.email});
+    let isUserExist = await User.findOne({email:params.email});
 
     if (isUserExist) {
         return callback({
@@ -42,7 +42,7 @@ async function register(params, callback) {
     const salt = bcrypt.genSaltSync(10);
     params.password = bcrypt.hashSync(params.password, salt);
 
-    const userSchema = new user(params);
+    const userSchema = new User(params);
     userSchema.save()
         .then((response) => {
             return callback(null, response);
@@ -54,7 +54,7 @@ async function register(params, callback) {
 async function addToCart(userId, productId) {
     try {
       const product = await Product.findById(productId);
-      let userModel = await user.findById(userId);
+      let userModel = await User.findById(userId);
   
       if (userModel.cart.length == 0) {
         userModel.cart.push({ product, quantity: 1 });
@@ -85,7 +85,7 @@ async function addToCart(userId, productId) {
   async function removeFromCart(userId, productId) {
     try {
       const product = await Product.findById(productId);
-      let userModel = await user.findById(userId);
+      let userModel = await User.findById(userId);
   
       for (let i = 0; i < userModel.cart.length; i++) {
         if (userModel.cart[i].product._id.equals(product._id)) {
