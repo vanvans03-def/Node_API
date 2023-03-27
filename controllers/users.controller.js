@@ -30,14 +30,14 @@ exports.login = (req, res, next) => {
 
 exports.addToCart = async (req, res, next) => {
     try {
-        const { id } = req.body;
-        const user = await userService.addToCart(req.user, id);
-        res.json(user);
+      const userData = req.body;
+      const user = await userService.addToCart(userData);
+      res.json(user);
     } catch (e) {
-        next(e);
+      next(e);
     }
-};
-
+  };
+  
 exports.removeFromCart = async (req, res, next) => {
     try {
         const { id } = req.params;
