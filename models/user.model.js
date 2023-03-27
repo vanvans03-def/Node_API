@@ -32,7 +32,7 @@ const user = mongoose.model(
                 default: "user",
                 
              },cart:[{
-                product: { type: mongoose.Schema.Types.ObjectId, ref: 'product' },
+                product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
                 quantity: {
                     type: Number,
                     required: true

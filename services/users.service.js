@@ -51,6 +51,7 @@ async function register(params, callback) {
             return callback(error);
         });
 }
+
 async function addToCart(userId, productId) {
     try {
       const product = await Product.findById(productId);
@@ -80,7 +81,7 @@ async function addToCart(userId, productId) {
     } catch (e) {
       throw new Error(e.message);
     }
-  }
+}
   
   async function removeFromCart(userId, productId) {
     try {
