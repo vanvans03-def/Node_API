@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { product } = require("./product.model");
 const user = mongoose.model(
     "User",
     mongoose.Schema(
@@ -30,7 +31,14 @@ const user = mongoose.model(
                 type:String,
                 default: "user",
                 
-             }
+             },cart:[{
+                product: product,
+                quantity:{
+                    type:Number,
+                    require:true,
+                },
+                
+            }],
         },
         {
             toJSON: {
