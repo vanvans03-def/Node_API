@@ -32,13 +32,13 @@ const user = mongoose.model(
                 default: "user",
                 
              },cart:[{
-                product: product,
-                quantity:{
-                    type:Number,
-                    require:true,
-                },
-                
+                product: { type: mongoose.Schema.Types.ObjectId, ref: 'product' },
+                quantity: {
+                    type: Number,
+                    required: true
+                }
             }],
+            
         },
         {
             toJSON: {
