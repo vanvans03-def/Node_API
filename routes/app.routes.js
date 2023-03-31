@@ -36,7 +36,7 @@ router.delete("/registerstore/:id",registerstoreController.delete);
 
 // Cart routes
 router.post('/cart', userController.addToCart);
-router.delete('/cart/:id',userController.removeFromCart)
+router.delete('/cart/:email',userController.removeFromCart)
 
 
 /*

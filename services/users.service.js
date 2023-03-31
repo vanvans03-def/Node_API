@@ -52,18 +52,15 @@ async function register(params, callback) {
         });
 }
 
-
 async function addToCart(userData) {
     try {
-        const { UserId, ProductId } = userData;
+        const { UserEmail, ProductId } = userData;
         const productModel = await product.findById(ProductId);
 
-        let userModel = await user.findOne({ id: UserId });
+        let userModel = await user.findOne({ email: UserEmail });
 
-
-        console.log(UserId)
         if (userModel.cart.length == 0) {
-            userModel.cart.push({ productModel, quantity: 1 });
+            userModel.cart.push({ product: productModel, quantity: 1 });
         } else {
             let isProductFound = false;
             for (let i = 0; i < userModel.cart.length; i++) {
@@ -78,7 +75,7 @@ async function addToCart(userData) {
                 );
                 producttt.quantity += 1;
             } else {
-                userModel.cart.push({ productModel, quantity: 1 });
+                userModel.cart.push({ product: productModel, quantity: 1 });
             }
         }
         userModel = await userModel.save();
@@ -87,7 +84,6 @@ async function addToCart(userData) {
         throw new Error(e.message);
     }
 }
-
 
 
 async function removeFromCart(userId, productId) {
