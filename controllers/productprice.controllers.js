@@ -60,7 +60,7 @@ exports.findAll = (req, res, next) => {
 
 exports.findOne = (req, res, next) => {
     var model = {
-        productId: req.params.productId,
+        productId: req.params.id,
     };
 
     productpriceService.getProductPriceById(model, (error, results) => {
