@@ -38,6 +38,9 @@ router.delete("/registerstore/:id",registerstoreController.delete);
 router.post('/cart', userController.addToCart);
 router.delete('/cart/:email',userController.removeFromCart)
 
+router.post("/productprices",productpricesController.create);
+router.get("/productprices",registerstoreController.findAll);
+router.get("/productprices/:id",registerstoreController.findOne);
 
 /*
 router.post("/slider",sliderController.create);
