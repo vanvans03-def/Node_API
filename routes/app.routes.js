@@ -3,44 +3,46 @@ const userController = require("../controllers/users.controller");
 const productController = require("../controllers/products.controller");
 const registerstoreController = require("../controllers/registerstore.controller");
 const sliderController = require("../controllers/slider.controller");
-const relatedProductController = require("../controllers/related-product.controller")
+const relatedProductController = require("../controllers/related-product.controller");
 const express = require("express");
 const router = express.Router();
-const {authenticationToken}  = require("../middleware/auth");
-const Product  = require("../models/product.model");
+const { authenticationToken } = require("../middleware/auth");
+const Product = require("../models/product.model");
 
-router.post("/category",categoryController.create);
-router.get("/category",categoryController.findAll);
-router.get("/category/:id",categoryController.findOne);
-router.put("/category/:id",categoryController.update);
-router.delete("/category/:id",categoryController.delete);
+router.post("/category", categoryController.create);
+router.get("/category", categoryController.findAll);
+router.get("/category/:id", categoryController.findOne);
+router.put("/category/:id", categoryController.update);
+router.delete("/category/:id", categoryController.delete);
 
-router.post("/register",userController.register);
-router.post("/login",userController.login);
+router.post("/register", userController.register);
+router.post("/login", userController.login);
 
+router.get("/product/search/:productName", productController.searchProduct);
+router.post("/product", productController.create);
+router.get("/product", productController.findAll);
+router.get("/product/:id", productController.findOne);
+router.put("/product/:id", productController.update);
+router.delete("/product/:id", productController.delete);
+router.post(
+  "/rate-product",
+  authenticationToken,
+  productController.rateProduct
+);
 
-router.get('/product/search/:productName', productController.searchProduct);
-router.post("/product",productController.create);
-router.get("/product",productController.findAll);
-router.get("/product/:id",productController.findOne);
-router.put("/product/:id",productController.update);
-router.delete("/product/:id",productController.delete);
-router.post("/rate-product", authenticationToken, productController.rateProduct);
-  
-
-router.post("/registerstore",registerstoreController.create);
-router.get("/registerstore",registerstoreController.findAll);
-router.get("/registerstore/:id",registerstoreController.findOne);
-router.put("/registerstore/:id",registerstoreController.update);
-router.delete("/registerstore/:id",registerstoreController.delete);
+router.post("/registerstore", registerstoreController.create);
+router.get("/registerstore", registerstoreController.findAll);
+router.get("/registerstore/:id", registerstoreController.findOne);
+router.put("/registerstore/:id", registerstoreController.update);
+router.delete("/registerstore/:id", registerstoreController.delete);
 
 // Cart routes
-router.post('/cart', userController.addToCart);
-router.delete('/cart/:email',userController.removeFromCart)
+router.post("/cart", userController.addToCart);
+router.delete("/cart/:email", userController.removeFromCart);
 
-router.post("/productprices",productpricesController.create);
-router.get("/productprices",registerstoreController.findAll);
-router.get("/productprices/:id",registerstoreController.findOne);
+//router.post("/productprices", productpricesController.create);
+//router.get("/productprices", registerstoreController.findAll);
+//router.get("/productprices/:id", registerstoreController.findOne);
 
 /*
 router.post("/slider",sliderController.create);
@@ -76,5 +78,5 @@ router.post("/rate-product", authenticationToken, async (req, res) => {
       res.status(500).json({ error: e.message });
     }
   });*/
-  
+
 module.exports = router;
