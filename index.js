@@ -39,8 +39,8 @@ app.listen(process.env.port || 4000, function () {
     console.log('Ready to go!!');
 });
 
-const cron = require('node-cron');
 const axios = require('axios');
+const cron = require('node-cron');
 const { response } = require('express');
 
 const productPriceSchema = new mongoose.Schema({
@@ -54,23 +54,18 @@ const productPriceSchema = new mongoose.Schema({
     priceMax: Number,
     });
 
-const ProductPrice =  mongoose.model("ProductPrice", productPriceSchema);
+const ProductPrice =  mongoose.model('ProductPrice', productPriceSchema);
 
 const fruits = ["P13002","P13004","P13006","P13008","P13010","P13012","P13014","P13016","P13018","P13020","P13021","P13023","P13025","P13027","P13029","P13031","P13032","P13034","P13036","P13037","P13038","P13040","P13041","P13042","P13043","P13044","P13045","P13046","P13083","P13085","P13086","P13087","P13089","P13090","P13091","P14001","P14002","P14003","P14004","P14005","P14006","P14007","P14008"];
 let date =  new Date();
 let yesterday = new Date(Date);
 yesterday.setDate(date.getDate()-1);
 
-
-
-
-mongoose.connect('mongodb://localhost/mydatabase', { userNeUrlParsers: true});
-
 for(let i = 0 ;i < fruits.length;i++){
     cron.schedule('0 0 * * *', async () => {
         try{
             for(let i = 0; i <fruits.length; i++){
-            const resp =  await axios.get(
+            const response =  await axios.get(
                 'https://dataapi.moc.go.th/gis-product-prices?product_id=${fruits[i]}&from_date=${date}&to_date=${yesterday}');
                 const { product_id, product_name, category_name, group_name, unit, price_list} = response.data;
 
