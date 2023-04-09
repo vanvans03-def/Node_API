@@ -79,7 +79,7 @@ console.log(formattedDate); // outputs "2023-01-21" (for today's date)
 const formattedDate2 = `${yyyy}-${mm}-${dd}`;
 console.log(formattedDate);
 
-cron.schedule("*/1 * * * *", async () => {
+cron.schedule("0 0 * * *", async () => {
   try {
     for (let i = 0; i < fruits.length; i++) {
       const response = await axios.get(
