@@ -61,20 +61,26 @@ async function getProducts(params, callback) {
         return callback(error);
     });
 }
-
 async function getProductById(params, callback) {
-    const productId = params.productId;
+  const productId = params.productId;
+  try {
+      const productData = await product.findById(productId)
+          //.populate('category', 'categoryId')
+          .select('-__v -relatedProduct')
+          .lean();
+      if (!productData) {
+          return callback({ message: "Product not found" });
+      }
     
-    product
-    .findById(productId)
-    .populate("category", "categoryName categoryImage")
-    .then((response) =>{
-        return callback(null, response);
-    })
-    .catch((error) => {
-        return callback(error);
-    });
+     
+      return callback(null, productData);
+  } catch (error) {
+      return callback(error);
+  }
 }
+
+
+
 
 async function updateProduct(params, callback) {
     const productId = params.productId;

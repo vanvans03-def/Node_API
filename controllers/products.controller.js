@@ -62,22 +62,23 @@ exports.findAll = (req, res, next) => {
 
 
 exports.findOne = (req, res, next) => {
-    var model = {
+    const model = {
         productId: req.params.id,
     };
 
-    productServices.getProductById(model, (error, results) => {
+    productServices.getProductById(model, (error, result) => {
         if (error) {
             return next(error);
-        }
-        else {
-            return res.status(200).send({
+        } else {
+            const response = {
                 message: "Success",
-                data: results
-            });
+                data: result
+            };
+            return res.status(200).send(response);
         }
     });
-}
+};
+
 
 
 exports.update = (req, res, next) => {
