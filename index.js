@@ -62,9 +62,9 @@ const fruits = ["P13002","P13004","P13006"];
 let date =  new Date();
 let yesterday = new Date(Date);
 yesterday.setDate(date.getDate()-1);
-
+/*
 for(let i = 0 ;i < fruits.length;i++){
-    cron.schedule('*/*1 * * * *', async () => {
+    cron.schedule('*/ /**1 * * * *', async () => {
         try{
             for(let i = 0; i <fruits.length; i++){
             const response =  await axios.get(
@@ -90,4 +90,4 @@ for(let i = 0 ;i < fruits.length;i++){
                 console.error('Error saved faile', error);
         }
     });
-}
+}*/
