@@ -85,27 +85,34 @@ async function addToCart(userData) {
     }
 }
 
-
-async function removeFromCart(userId, productId) {
+async function removeFromCart(userData) {
     try {
-        const product = await Product.findById(productId);
-        let userModel = await user.findById(userId);
+        const { UserEmail, ProductId } = userData;
+        const productModel = await product.findById(ProductId);
 
-        for (let i = 0; i < userModel.cart.length; i++) {
-            if (userModel.cart[i].product._id.equals(product._id)) {
-                if (userModel.cart[i].quantity == 1) {
-                    userModel.cart.splice(i, 1);
-                } else {
-                    user.cart[i].quantity -= 1;
+        let userModel = await user.findOne({ email: UserEmail });
+
+        if (userModel.cart.length == 0) {
+            userModel.cart.push({ product: productModel, quantity: 1 });
+        } else {
+            let isProductFound = false;
+            for (let i = 0; i < userModel.cart.length; i++) {
+                if (userModel.cart[i].product._id.equals(productModel._id)) {
+                    if(userModel.cart[i].quantity == 1){
+                        userModel.cart.splice(i,1);
+                    }else{
+                        userModel.cart[i].quantity -=1;
+                    }
                 }
             }
+
         }
-        user = await user.save();
-        return user;
+        userModel = await userModel.save();
+        return userModel;
     } catch (e) {
         throw new Error(e.message);
     }
-}
+    }
 
 module.exports = {
     login,

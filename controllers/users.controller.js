@@ -38,12 +38,13 @@ exports.addToCart = async (req, res, next) => {
     }
   };
   
-exports.removeFromCart = async (req, res, next) => {
+  exports.removeFromCart = async (req, res, next) => {
     try {
-        const { id } = req.params;
-        const user = await userService.removeFromCart(req.user, id);
-        res.json(user);
+      const userData = req.body;
+      const user = await userService.removeFromCart(userData);
+      res.json(user);
     } catch (e) {
-        next(e);
+      next(e);
     }
-};
+  };
+  
