@@ -52,38 +52,29 @@ async function register(params, callback) {
         });
 }
 
+
 async function addToCart(userData) {
     try {
-        const { UserEmail, ProductId } = userData;
-        const productModel = await product.findById(ProductId);
+    const { UserEmail, ProductId } = userData;
+    const productModel = await product.findById(ProductId);
 
-        let userModel = await user.findOne({ email: UserEmail });
+        let userModel = await user.findOne({ email: UserEmail }).populate('cart.product');
 
-        if (userModel.cart.length == 0) {
-            userModel.cart.push({ product: productModel, quantity: 1 });
+        const productIndex = userModel.cart.findIndex(item => item.product._id.equals(productModel._id));
+    
+        if (productIndex !== -1) {
+            userModel.cart[productIndex].quantity += 1;
         } else {
-            let isProductFound = false;
-            for (let i = 0; i < userModel.cart.length; i++) {
-                if (userModel.cart[i].product._id.equals(productModel._id)) {
-                    isProductFound = true;
-                }
-            }
-
-            if (isProductFound) {
-                let producttt = userModel.cart.find((productt) =>
-                    productt.product._id.equals(productModel._id)
-                );
-                producttt.quantity += 1;
-            } else {
-                userModel.cart.push({ product: productModel, quantity: 1 });
-            }
+            userModel.cart.push({ product: productModel.toObject(), quantity: 1 });
         }
+    
         userModel = await userModel.save();
         return userModel;
     } catch (e) {
         throw new Error(e.message);
     }
 }
+
 
 async function removeFromCart(userData) {
     try {
