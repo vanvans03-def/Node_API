@@ -3,26 +3,28 @@ const bcrypt = require("bcryptjs");
 const auth = require("../middleware/auth");
 const { product } = require("../models/product.model");
 const mongoose = require('mongoose');
+
+
 async function login({ email, password }, callback) {
-    const userModel = await user.findOne({ email }).select("+password")
-
-
-
+    const userModel = await user.findOne({ email }).select("+password -__v -relatedProduct").lean();
     if (userModel != null) {
-        if (bcrypt.compareSync(password, userModel.password)) {
-            const token = auth.generateAccessToken(userModel.toJSON());
-            return callback(null, { ...userModel.toJSON(), token });
-        } else {
-            return callback({
-                message: "Invalid Email/Password"
-            });
-        }
-    } else {
+      if (bcrypt.compareSync(password, userModel.password)) {
+        const token = auth.generateAccessToken(userModel);
+        const userModelWithProducts = await user.populate(userModel, { path: "cart.product", select: "-__v -relatedProduct" });
+        return callback(null, { ...userModelWithProducts, token });
+      } else {
         return callback({
-            message: "Invalid Email/Password"
+          message: "Invalid Email/Password"
         });
+      }
+    } else {
+      return callback({
+        message: "Invalid Email/Password"
+      });
     }
-}
+  }
+  
+
 
 async function register(params, callback) {
     if (params.email === undefined) {
@@ -58,16 +60,16 @@ async function addToCart(userData) {
         const { UserEmail, ProductId } = userData;
         const productModel = await product.findById(ProductId);
 
-        let userModel = await user.findOne({ email: UserEmail }).populate('cart.product');
+        let userModel = await user.findOne({ email: UserEmail }).populate({ path: 'cart.product', select: '-__v -relatedProduct' });
 
         const productIndex = userModel.cart.findIndex(item => item.product._id.equals(productModel._id));
-    
+
         if (productIndex !== -1) {
             userModel.cart[productIndex].quantity += 1;
         } else {
             userModel.cart.push({ product: productModel.toObject(), quantity: 1 });
         }
-    
+
         userModel = await userModel.save();
         return userModel;
     } catch (e) {
@@ -76,13 +78,12 @@ async function addToCart(userData) {
 }
 
 
-
 async function removeFromCart(userData) {
     try {
         const { UserEmail, ProductId } = userData;
         const productModel = await product.findById(ProductId);
 
-        let userModel = await user.findOne({ email: UserEmail });
+        let userModel = await user.findOne({ email: UserEmail }).populate({ path: 'cart.product', select: '-__v -relatedProduct' });
 
         if (userModel.cart.length == 0) {
             userModel.cart.push({ product: productModel, quantity: 1 });
@@ -90,10 +91,10 @@ async function removeFromCart(userData) {
             let isProductFound = false;
             for (let i = 0; i < userModel.cart.length; i++) {
                 if (userModel.cart[i].product._id.equals(productModel._id)) {
-                    if(userModel.cart[i].quantity == 1){
-                        userModel.cart.splice(i,1);
-                    }else{
-                        userModel.cart[i].quantity -=1;
+                    if (userModel.cart[i].quantity == 1) {
+                        userModel.cart.splice(i, 1);
+                    } else {
+                        userModel.cart[i].quantity -= 1;
                     }
                 }
             }
@@ -104,7 +105,7 @@ async function removeFromCart(userData) {
     } catch (e) {
         throw new Error(e.message);
     }
-    }
+}
 
 module.exports = {
     login,
