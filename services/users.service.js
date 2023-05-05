@@ -55,8 +55,8 @@ async function register(params, callback) {
 
 async function addToCart(userData) {
     try {
-    const { UserEmail, ProductId } = userData;
-    const productModel = await product.findById(ProductId);
+        const { UserEmail, ProductId } = userData;
+        const productModel = await product.findById(ProductId);
 
         let userModel = await user.findOne({ email: UserEmail }).populate('cart.product');
 
@@ -74,6 +74,7 @@ async function addToCart(userData) {
         throw new Error(e.message);
     }
 }
+
 
 
 async function removeFromCart(userData) {
