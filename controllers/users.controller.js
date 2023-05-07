@@ -47,4 +47,37 @@ exports.addToCart = async (req, res, next) => {
       next(e);
     }
   };
+
+
   
+exports.saveAddress = async (req, res, next) => {
+  try {
+    const userData = req.body;
+    const user = await userService.saveAddress(userData);
+    res.json(user);
+  } catch (e) {
+    next(e);
+  }
+};
+
+  
+exports.placeOrder = async (req, res, next) => {
+  try {
+    const orderData =req.body
+    const order = await userService.placeOrder(orderData);
+    res.json(order);
+  } catch (e) {
+    next(e);
+  }
+};
+
+
+exports.myOrder = async (req, res, next) => {
+  try {
+    const id =req.body
+    const order = await userService.myOrder(id);
+    res.json(order);
+  } catch (e) {
+    next(e);
+  }
+};

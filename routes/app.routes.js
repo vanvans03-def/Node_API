@@ -39,7 +39,9 @@ router.delete("/registerstore/:id", registerstoreController.delete);
 // Cart routes
 router.post("/cart", userController.addToCart);
 router.delete("/remove-cart", userController.removeFromCart);
-
+router.post("/save-user-address", userController.saveAddress);
+router.post("/order", userController.placeOrder);
+router.get("/order-me", userController.myOrder);
 //router.post("/productprices", productpricesController.create);
 //router.get("/productprices", registerstoreController.findAll);
 //router.get("/productprices/:id", registerstoreController.findOne);
