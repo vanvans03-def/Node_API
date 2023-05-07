@@ -74,9 +74,10 @@ exports.placeOrder = async (req, res, next) => {
 
 exports.myOrder = async (req, res, next) => {
   try {
-    const id =req.body
-    const order = await userService.myOrder(id);
-    res.json(order);
+    const id = req.params.id
+  
+    const orders = await userService.myOrder(id);
+    res.json(orders);
   } catch (e) {
     next(e);
   }
