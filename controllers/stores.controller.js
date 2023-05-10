@@ -1,13 +1,13 @@
-const registerstoreServices = require("../services/registerstore.service");
+const storeServices = require("../services/stores.service");
 const upload = require("../middleware/registerstore.upload");
 
 exports.create = (req, res, next) => {
-    upload(req, res, function (err){
+    upload(req, res, function (err) {
         if (err) {
             next(err);
         }
         else {
-            const path = 
+            const path =
                 req.file != undefined ? req.file.path.replace(/\\/g, "/") : "";
 
             var model = {
@@ -15,59 +15,67 @@ exports.create = (req, res, next) => {
                 //StoreImage: path != "" ? "/" + path : "",
                 StoreImage: req.body.StoreImage,
                 //Banner: path != "" ? "/" + path : "",
-                Banner: req.body.Banner,                
+                Banner: req.body.Banner,
+                phone: req.body.phone,
                 StoreDescription: req.body.StoreDescription,
                 StoreShortDescription: req.body.StoreShortDescription,
-                Store_status: req.body.Store_status
-            }    
-            
-            registerstoreServices.createStore(model, (error, results) => {
+                Store_status: req.body.Store_status,
+                user: req.body.user,
+
+            }
+
+            // check if storename already exists
+            storeServices.getStore({ Storename: req.body.Storename }, (error, results) => {
                 if (error) {
                     return next(error);
                 }
                 else {
-                    return res.status(200).send({
-                        message: "Success",
-                        data: results
-                    });
+                    if (results.length > 0) {
+                        // storename already exists
+                        return res.status(400).send({
+                            message: "Storename already exists"
+                        });
+                    } else {
+                        storeServices.createStore(model, (error, results) => {
+                            if (error) {
+                                return next(error);
+                            }
+                            else {
+                                return res.status(200).send({
+                                    message: "Success",
+                                    data: results
+                                });
+                            }
+                        });
+                    }
                 }
             });
         }
     });
 }
 
- exports.findAll = (req, res, next) => {
-    var model = {
-        Storename: req.body.Storename,
-        StoreImage: path != "" ? "/" + path : "",
-        //StoreImage: req.body.StoreImage,
-        Banner: req.body.Banner,
-        //Banner: req.body.Banner,                
-        StoreDescription: req.body.StoreDescription,
-        StoreShortDescription: req.body.StoreShortDescription,
-        Store_status: req.body.Store_status
-    };
 
-    registerstoreServices.getStore(model, (error, results) => {
+exports.findAll = (req, res, next) => {
+    storeServices.getStore({}, (error, results) => {
         if (error) {
             return next(error);
-        }
-        else {
+        } else {
             return res.status(200).send({
                 message: "Success",
                 data: results
             });
         }
     });
- }
+}
 
 
- exports.findOne = (req, res, next) => {
+
+exports.findOne = (req, res, next) => {
     var model = {
         storeId: req.params.id,
     };
 
-    registerstoreServices.getStoreById(model, (error, results) => {
+    storeServices.getStoreById(model, (error, results) => {
         if (error) {
             return next(error);
         }
@@ -78,29 +86,32 @@ exports.create = (req, res, next) => {
             });
         }
     });
- }
+}
 
 
- exports.update = (req, res, next) => {
-    upload(req, res, function (err){
+exports.update = (req, res, next) => {
+    upload(req, res, function (err) {
         if (err) {
             next(err);
         }
         else {
             const path = req.file != undefined ? req.file.path.replace(/\\/g, "/") : "";
-            
+
             var model = {
                 Storename: req.body.Storename,
-                StoreImage: path != "" ? "/" + path : "",
-                //StoreImage: req.body.StoreImage,
-                //anner: path != "" ? "/" + path : "",
-                Banner: req.body.Banner,                
+                //StoreImage: path != "" ? "/" + path : "",
+                StoreImage: req.body.StoreImage,
+                //Banner: path != "" ? "/" + path : "",
+                Banner: req.body.Banner,
+                phone: req.body.phone,
                 StoreDescription: req.body.StoreDescription,
                 StoreShortDescription: req.body.StoreShortDescription,
-                Store_status: req.body.Store_status
-            }    
-            
-            registerstoreServices.updateStore(model, (error, results) => {
+                Store_status: req.body.Store_status,
+                user: req.body.user,
+                storeId:req.body.storeId,
+            }
+
+            storeServices.updateStore(model, (error, results) => {
                 if (error) {
                     return next(error);
                 }
@@ -121,7 +132,7 @@ exports.delete = (req, res, next) => {
         storeId: req.params.id,
     };
 
-    registerstoreServices.deleteStore(model, (error, results) => {
+    storeServices.deleteStore(model, (error, results) => {
         if (error) {
             return next(error);
         }
@@ -132,4 +143,4 @@ exports.delete = (req, res, next) => {
             });
         }
     });
- }
+}

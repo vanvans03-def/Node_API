@@ -172,6 +172,15 @@ async function myOrder(id) {
     }
 }
 
+//merchant get order
+async function merChantOrder(id) {
+    try {      
+        let orders = await order.find({ userId: id }).populate({ path: 'products.product', select: '-__v -relatedProduct' });
+        return orders;
+    } catch (e) {
+        throw new Error(e.message);
+    }
+}
 
 module.exports = {
     login,

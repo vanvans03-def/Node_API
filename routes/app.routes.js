@@ -1,7 +1,7 @@
 const categoryController = require("../controllers/categories.controllers");
 const userController = require("../controllers/users.controller");
 const productController = require("../controllers/products.controller");
-const registerstoreController = require("../controllers/registerstore.controller");
+const storeController = require("../controllers/stores.controller");
 const sliderController = require("../controllers/slider.controller");
 const relatedProductController = require("../controllers/related-product.controller");
 const express = require("express");
@@ -30,11 +30,11 @@ router.post(
   productController.rateProduct
 );
 
-router.post("/registerstore", registerstoreController.create);
-router.get("/registerstore", registerstoreController.findAll);
-router.get("/registerstore/:id", registerstoreController.findOne);
-router.put("/registerstore/:id", registerstoreController.update);
-router.delete("/registerstore/:id", registerstoreController.delete);
+router.post("/store", storeController.create);
+router.get("/store", storeController.findAll);
+router.get("/store/:id", storeController.findOne);
+router.put("/store", storeController.update);
+router.delete("/store/:id", storeController.delete);
 
 // Cart routes
 router.post("/cart", userController.addToCart);

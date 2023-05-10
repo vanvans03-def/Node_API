@@ -1,7 +1,11 @@
-const { registerstore } = require("../models/registerstore.model");
+const { store } = require("../models/store.model");
 const { MONGO_DB_CONFIG } = require("../config/app.config");
+const { param } = require("../routes/app.routes");
+const { user } = require("../models/user.model");
+
 
 async function createStore(params, callback) {
+    
     if(!params.Storename) {
         return callback(
             {
@@ -10,9 +14,21 @@ async function createStore(params, callback) {
             ""
         );
     }
-
-    const registerstoreModel = new registerstore(params);
-    registerstoreModel.save()   
+    const userModel = await user.findById(params.user);
+   
+    if(userModel.type != "merchant"){
+     
+        return callback(
+            {
+                message: 'Error Only "merchant" can create store',
+            },
+            
+        );
+    }
+    
+    const storeModel = new store(params);
+  
+    storeModel.save()     
         .then((response) => {
             return callback(null, response);
         })
@@ -31,13 +47,11 @@ async function getStore(params, callback) {
         };
     }
 
-    
-
     let perPage = Math.abs(params.pageSize) || MONGO_DB_CONFIG.PAGE_SIZE;
     let page = (Math.abs(params.page) || 1) - 1;
 
-    registerstore
-    .find(condition, "Storename StoreImage Banner StoreDescription StoreShortDescription Store_status")
+    store
+    .find(condition, "Storename StoreImage Banner phone StoreDescription StoreShortDescription Store_status user")
     .limit(perPage)
     .skip(perPage * page)
     .then((response) => {
@@ -51,7 +65,7 @@ async function getStore(params, callback) {
 async function getStoreById(params, callback) {
     const storeId = params.storeId;
     
-    registerstore
+    store
     .findById(storeId)
     .then((response) =>{
         return callback(null, response);
@@ -64,8 +78,8 @@ async function getStoreById(params, callback) {
 async function updateStore(params, callback) {
     const storeId = params.storeId;
    
-    registerstore
-    .findByIdAndUpdate(storeId, params, {useFindAndModify: false})
+    store
+    .findByIdAndUpdate(storeId, params, {new: true, useFindAndModify: false})
     .then((response) => {
         if(!response) callback('Cannot update Store with id ' + storeId)
         else callback(null,response);
@@ -75,10 +89,12 @@ async function updateStore(params, callback) {
     });
 }
 
+
+
 async function deleteStore(params, callback) {
     const storeId = params.storeId;
     
-    registerstore
+    store
     .findByIdAndRemove(storeId)
     .then((response) => {
         if(!response) {
