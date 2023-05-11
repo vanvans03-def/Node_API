@@ -22,6 +22,7 @@ exports.create = (req, res, next) => {
                 productType: req.body.productType,
                 stockStatus: req.body.stockStatus,
                 productImage: req.body.productImage,
+                storeId:req.body.storeId
             }
 
             productServices.createProduct(model, (error, results) => {
@@ -102,6 +103,7 @@ exports.update = (req, res, next) => {
                 stockStatus: req.body.stockStatus,
                 // productImage: path != "" ? "/" + path : ""
                 productImage: req.body.productImage,
+                storeId:req.body.storeId
             }
 
             productServices.updateProduct(model, (error, results) => {
@@ -166,4 +168,17 @@ exports.rateProduct = (req, res, next) => {
         next(error);
       });
   };
+
+
+  exports.getProductByStoreId = async (req, res, next) => {
+    try {
+      const id = req.params.storeId
+      const message = "Success";
+      const products = await productServices.getProductsByStoreId(id, message);
+      return res.status(200).json(products);
+    } catch (e) {
+      next(e);
+    }
+  };
+  
   

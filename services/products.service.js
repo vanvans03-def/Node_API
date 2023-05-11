@@ -20,11 +20,20 @@ async function createProduct(params, callback) {
             ""
         );
     }
+    if(!params.storeId) {
+      return callback(
+          {
+              message: "StoreId required",
+          },
+          ""
+      );
+  }
 
     const productModel = new product(params);
     productModel.save()   
-        .then((response) => {
-            return callback(null, response);
+        .then(async (response) => {
+          const createdProduct = await product.findById(response._id).select('-relatedProduct -__v');
+          return callback(null, createdProduct);
         })
         .catch((error) => {
             return callback(error);
@@ -50,7 +59,7 @@ async function getProducts(params, callback) {
     let page = (Math.abs(params.page) || 1) - 1;
 
     product
-    .find(condition, "productName category productShortDescription productDescription productPrice productSalePrice productImage productSKU productType stockStatus")
+    .find(condition, "productName category productShortDescription productDescription productPrice productSalePrice productImage productSKU productType stockStatus storeId ratings")
     //.populate("category", "categoryName categoryImage")
     .limit(perPage)
     .skip(perPage * page)
@@ -61,6 +70,8 @@ async function getProducts(params, callback) {
         return callback(error);
     });
 }
+
+
 async function getProductById(params, callback) {
   const productId = params.productId;
   try {
@@ -86,7 +97,7 @@ async function updateProduct(params, callback) {
     const productId = params.productId;
    
     product
-    .findByIdAndUpdate(productId, params, {useFindAndModify: false})
+    .findByIdAndUpdate(productId, params, {new: true, useFindAndModify: false})
     .then((response) => {
         if(!response) callback('Cannot update Product with id ' + productId)
         else callback(null,response);
@@ -168,6 +179,17 @@ async function searchProducts(productName) {
     }
   }
   
+  async function getProductsByStoreId(id, message) {
+    try {      
+      let products = await product.find({ storeId: id })
+      //.populate('category', 'categoryId')
+      .select('-__v -relatedProduct');
+      return { message: message, data: products };
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  }
+  
   
 module.exports = {
     createProduct,
@@ -176,7 +198,8 @@ module.exports = {
     updateProduct,
     deleteProduct,
     searchProducts,
-    rateProduct
+    rateProduct,
+    getProductsByStoreId
 }
 
 

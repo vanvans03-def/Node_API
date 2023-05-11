@@ -45,6 +45,10 @@ const product = mongoose.model(
             stockStatus: {
                 type: String,
                 default: "IN"
+            },storeId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "store",
+                required: true,
             },
             relatedProduct: [
                 {
