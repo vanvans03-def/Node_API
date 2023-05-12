@@ -32,6 +32,7 @@ router.get("/store", storeController.findAll);
 router.get("/store/:id", storeController.findOne);
 router.put("/store", storeController.update);
 router.delete("/store/:id", storeController.delete);
+router.get("/my-store/:id", storeController.getStoreByuserId);
 
 // Cart routes
 router.post("/cart", userController.addToCart);

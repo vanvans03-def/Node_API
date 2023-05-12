@@ -3,15 +3,15 @@ const store = mongoose.model(
     "Store",
     mongoose.Schema(
         {
-            Storename: {
+            storeName: {
                 type: String,
                 required: true,
                 unique: true,
             },
-            StoreImage: {
+            storeImage: {
                 type: String
             },
-            Banner: {
+            banner: {
                 type: String
             },
             phone: {
@@ -19,15 +19,15 @@ const store = mongoose.model(
                 default: ""
             },
 
-            StoreDescription: {
+            storeDescription: {
                 type: String,
                 required: true
             },
-            StoreShortDescription: {
+            storeShortDescription: {
                 type: String,
                 required: true
             },
-            Store_status: {
+            storeStatus: {
                 type: String,
                 required: true,
                 default: "0"

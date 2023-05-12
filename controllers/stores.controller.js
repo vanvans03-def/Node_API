@@ -11,15 +11,15 @@ exports.create = (req, res, next) => {
                 req.file != undefined ? req.file.path.replace(/\\/g, "/") : "";
 
             var model = {
-                Storename: req.body.Storename,
+                storeName: req.body.Storename,
                 //StoreImage: path != "" ? "/" + path : "",
-                StoreImage: req.body.StoreImage,
+                storeImage: req.body.StoreImage,
                 //Banner: path != "" ? "/" + path : "",
-                Banner: req.body.Banner,
+                banner: req.body.Banner,
                 phone: req.body.phone,
-                StoreDescription: req.body.StoreDescription,
-                StoreShortDescription: req.body.StoreShortDescription,
-                Store_status: req.body.Store_status,
+                storeDescription: req.body.StoreDescription,
+                storeShortDescription: req.body.StoreShortDescription,
+                storeStatus: req.body.Store_status,
                 user: req.body.user,
 
             }
@@ -98,15 +98,15 @@ exports.update = (req, res, next) => {
             const path = req.file != undefined ? req.file.path.replace(/\\/g, "/") : "";
 
             var model = {
-                Storename: req.body.Storename,
+                storeName: req.body.Storename,
                 //StoreImage: path != "" ? "/" + path : "",
-                StoreImage: req.body.StoreImage,
+                storeImage: req.body.StoreImage,
                 //Banner: path != "" ? "/" + path : "",
-                Banner: req.body.Banner,
+                banner: req.body.Banner,
                 phone: req.body.phone,
-                StoreDescription: req.body.StoreDescription,
-                StoreShortDescription: req.body.StoreShortDescription,
-                Store_status: req.body.Store_status,
+                storeDescription: req.body.StoreDescription,
+                storeShortDescription: req.body.StoreShortDescription,
+                storeStatus: req.body.Store_status,
                 user: req.body.user,
                 storeId:req.body.storeId,
             }
@@ -143,4 +143,15 @@ exports.delete = (req, res, next) => {
             });
         }
     });
+}
+
+exports.getStoreByuserId = async (req, res, next) => {
+    try {
+      const id = req.params.storeId
+      const message = "Success";
+      const data = await storeServices.getStoreByuserId(id, message);
+      return res.status(200).json(data);
+    } catch (e) {
+      next(e);
+    }
 }
