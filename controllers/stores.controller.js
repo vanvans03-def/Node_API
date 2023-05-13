@@ -147,7 +147,7 @@ exports.delete = (req, res, next) => {
 
 exports.getStoreByuserId = async (req, res, next) => {
     try {
-      const id = req.params.storeId
+      const id = req.params.id
       const message = "Success";
       const data = await storeServices.getStoreByuserId(id, message);
       return res.status(200).json(data);

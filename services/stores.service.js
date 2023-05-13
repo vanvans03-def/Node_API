@@ -3,7 +3,7 @@ const { MONGO_DB_CONFIG } = require("../config/app.config");
 const { param } = require("../routes/app.routes");
 const { user } = require("../models/user.model");
 
-
+const mongoose = require("mongoose");
 async function createStore(params, callback) {
     if (!params.storeName) {
       return callback({
@@ -110,16 +110,21 @@ async function deleteStore(params, callback) {
 }
 
 async function getStoreByuserId(id, message) {
-    try {      
-      let stores = await store.find({ userId: id })
-      //.populate('category', 'categoryId')
+  try {      
+
+    const userId = mongoose.Types.ObjectId(id)
+    let stores = await store.find({ user: userId })
       .select('-__v ')
-     
-      return { message: message, data: stores };
-    } catch (e) {
-      throw new Error(e.message);
+    if (stores.length === 0) {
+      return { message: 'Store not found', data: null };
     }
+    return { message: message, data: stores };
+  } catch (e) {
+    return { message: 'Store not found', data: null };
   }
+}
+
+
   
 
 module.exports = {
