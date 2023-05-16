@@ -8,6 +8,10 @@ const express = require("express");
 const router = express.Router();
 const { authenticationToken } = require("../middleware/auth");
 const Product = require("../models/product.model");
+const provinceController = require("../controllers/provinces.controllers");
+
+router.get("/province", provinceController.findAll);
+
 
 router.post("/category", categoryController.create);
 router.get("/category", categoryController.findAll);
