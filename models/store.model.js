@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { province } = require("./province_thai.model");
 const store = mongoose.model(
     "Store",
     mongoose.Schema(
@@ -36,6 +37,11 @@ const store = mongoose.model(
                 ref: "user",
                 required: true,
             },
+            province:{
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "province",
+                required: true,
+            }
         },
         {
             toJSON: {

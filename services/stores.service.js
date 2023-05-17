@@ -4,10 +4,18 @@ const { param } = require("../routes/app.routes");
 const { user } = require("../models/user.model");
 
 const mongoose = require("mongoose");
+
+
 async function createStore(params, callback) {
+
     if (!params.storeName) {
       return callback({
         message: "Store Name required",
+      }, "");
+    }
+    if (!params.province) {
+      return callback({
+        message: "Province is required",
       }, "");
     }
   
@@ -53,7 +61,7 @@ async function getStore(params, callback) {
     let page = (Math.abs(params.page) || 1) - 1;
 
     store
-    .find(condition, "storeName storeImage banner phone storeDescription storeShortDescription storeStatus user")
+    .find(condition, "storeName storeImage banner phone storeDescription storeShortDescription storeStatus user province")
     .limit(perPage)
     .skip(perPage * page)
     .then((response) => {

@@ -9,33 +9,28 @@ exports.create = (req, res, next) => {
         else {
             const path =
                 req.file != undefined ? req.file.path.replace(/\\/g, "/") : "";
-
+                console.log(req.body);
             var model = {
-                storeName: req.body.Storename,
+                storeName: req.body.storeName,
                 //StoreImage: path != "" ? "/" + path : "",
-                storeImage: req.body.StoreImage,
+                storeImage: req.body.storeImage,
                 //Banner: path != "" ? "/" + path : "",
-                banner: req.body.Banner,
+                banner: req.body.banner,
                 phone: req.body.phone,
-                storeDescription: req.body.StoreDescription,
-                storeShortDescription: req.body.StoreShortDescription,
-                storeStatus: req.body.Store_status,
+                storeDescription: req.body.storeDescription,
+                storeShortDescription: req.body.storeShortDescription,
+                storeStatus: req.body.storeStatus,
                 user: req.body.user,
+                province:req.body.province
 
             }
-
+            console.log(req.body.storeName);
             // check if storename already exists
-            storeServices.getStore({ Storename: req.body.Storename }, (error, results) => {
+            storeServices.getStore({ storeName: req.body.storeName }, (error, results) => {
                 if (error) {
                     return next(error);
                 }
                 else {
-                    if (results.length > 0) {
-                        // storename already exists
-                        return res.status(400).send({
-                            message: "Storename already exists"
-                        });
-                    } else {
                         storeServices.createStore(model, (error, results) => {
                             if (error) {
                                 return next(error);
@@ -47,7 +42,7 @@ exports.create = (req, res, next) => {
                                 });
                             }
                         });
-                    }
+                    
                 }
             });
         }
@@ -98,16 +93,17 @@ exports.update = (req, res, next) => {
             const path = req.file != undefined ? req.file.path.replace(/\\/g, "/") : "";
 
             var model = {
-                storeName: req.body.Storename,
+                storeName: req.body.storeName,
                 //StoreImage: path != "" ? "/" + path : "",
-                storeImage: req.body.StoreImage,
+                storeImage: req.body.storeImage,
                 //Banner: path != "" ? "/" + path : "",
-                banner: req.body.Banner,
+                banner: req.body.banner,
                 phone: req.body.phone,
-                storeDescription: req.body.StoreDescription,
-                storeShortDescription: req.body.StoreShortDescription,
-                storeStatus: req.body.Store_status,
+                storeDescription: req.body.storeDescription,
+                storeShortDescription: req.body.storeShortDescription,
+                storeStatus: req.body.storeStatus,
                 user: req.body.user,
+                province:req.body.province,
                 storeId:req.body.storeId,
             }
 
