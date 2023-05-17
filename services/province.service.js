@@ -6,7 +6,7 @@ async function getProvince(params, callback) {
     try {
       const provinces = await province.find({})
       
-        console.log(provinces);
+      
       return callback(null, provinces);
     } catch (error) {
       return callback(error);

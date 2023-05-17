@@ -9,12 +9,15 @@ const store = mongoose.model(
                 required: true,
                 unique: true,
             },
-            storeImage: {
+            storeImage: [{
                 type: String
-            },
-            banner: {
+            }],
+            banner: [{
                 type: String
-            },
+            }],
+            idcardImage: [{
+                type: String
+            }],
             phone: {
                 type: String,
                 default: ""
@@ -26,7 +29,7 @@ const store = mongoose.model(
             },
             storeShortDescription: {
                 type: String,
-                required: true
+               
             },
             storeStatus: {
                 type: String,
