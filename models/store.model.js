@@ -18,6 +18,9 @@ const store = mongoose.model(
             idcardImage: [{
                 type: String
             }],
+            idcardNo:{
+                type:String
+            },
             phone: {
                 type: String,
                 default: ""

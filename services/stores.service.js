@@ -61,7 +61,7 @@ async function getStore(params, callback) {
     let page = (Math.abs(params.page) || 1) - 1;
 
     store
-    .find(condition, "storeName storeImage banner idcardImage phone  storeDescription storeShortDescription storeStatus user province")
+    .find(condition, "storeName storeImage banner idcardImage idcardNo phone  storeDescription storeShortDescription storeStatus user province")
     .limit(perPage)
     .skip(perPage * page)
     .then((response) => {
@@ -131,6 +131,8 @@ async function getStoreByuserId(id, message) {
     return { message: 'Store not found', data: null };
   }
 }
+
+
 
 
   

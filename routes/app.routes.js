@@ -44,6 +44,7 @@ router.delete("/remove-cart", userController.removeFromCart);
 router.post("/save-user-address", userController.saveAddress);
 router.post("/order", userController.placeOrder);
 router.get("/order-me/:id", userController.myOrder);
+router.get("/order-merchant/:id", userController.merchantOrder);
 //router.post("/productprices", productpricesController.create);
 //router.get("/productprices", registerstoreController.findAll);
 //router.get("/productprices/:id", registerstoreController.findOne);

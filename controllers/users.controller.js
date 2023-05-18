@@ -82,3 +82,14 @@ exports.myOrder = async (req, res, next) => {
     next(e);
   }
 };
+
+exports.merchantOrder = async (req, res, next) => {
+  try {
+    const id = req.params.id
+  
+    const orders = await userService.merchantOrder(id);
+    res.json(orders);
+  } catch (e) {
+    next(e);
+  }
+};
