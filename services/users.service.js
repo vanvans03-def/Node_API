@@ -173,10 +173,29 @@ async function myOrder(id) {
 }
 
 //merchant get order
-async function merChantOrder(id) {
+async function merchantOrder(id) {
     try {      
-        let orders = await order.find({ userId: id }).populate({ path: 'products.product', select: '-__v -relatedProduct' });
-        return orders;
+        let orders = await order.find({ storeId: id })
+        .populate({ path: 'products.product', select: '-__v -relatedProduct' });
+        //console.log(orders[0].products);
+        let merchantOrder = [];
+        let productinOrder = [];
+        //console.log(orders[0].products[0]);
+      
+       
+
+        for (var i = 0; i < orders.length; i++) {
+            for (var j = 0; j < orders[i].products.length; j++) {
+               
+                if (orders[i].products[j].product.storeId.toString() === id) {
+                    productinOrder.push(orders[i].products[j].product);
+                    merchantOrder.push(orders[i]);
+                    break; // เมื่อเจอสินค้าที่ตรงกับ storeId จะไม่ต้องวนลูปต่อในสินค้าอื่น
+                }
+            }
+        }
+        console.log(merchantOrder);
+        return merchantOrder;
     } catch (e) {
         throw new Error(e.message);
     }
@@ -190,4 +209,5 @@ module.exports = {
     saveAddress,
     placeOrder,
     myOrder,
+    merchantOrder
 }
