@@ -16,6 +16,10 @@ const order = mongoose.model(
           type: String,
           required: true,
         },
+        statusProductOrder: {
+          type: Number,
+          default: 0,
+        },
       },
       ],
       totalPrice: {

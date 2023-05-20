@@ -30,7 +30,9 @@ exports.login = (req, res, next) => {
 
 exports.addToCart = async (req, res, next) => {
     try {
+
       const userData = req.body;
+  
       const user = await userService.addToCart(userData);
       res.json(user);
     } catch (e) {
@@ -88,6 +90,17 @@ exports.merchantOrder = async (req, res, next) => {
     const id = req.params.id
   
     const orders = await userService.merchantOrder(id);
+    res.json(orders);
+  } catch (e) {
+    next(e);
+  }
+};
+
+
+exports.changeStatus = async (req, res, next) => {
+  try {
+    const data = req.body;
+    const orders = await userService.changeStatus(data);
     res.json(orders);
   } catch (e) {
     next(e);
