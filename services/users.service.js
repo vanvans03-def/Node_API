@@ -58,13 +58,19 @@ async function register(params, callback) {
 async function addToCart(userData) {
     try {
         const { UserEmail, ProductId } = userData;
-        const productModel = await product.findById(ProductId).select('-relatedProduct -__v');
 
+        const productModel = await product.findById(ProductId).select('-relatedProduct -__v');
+        //console.log(productModel);
 
         let userModel = await user.findOne({ email: UserEmail }).populate({ path: 'cart.product', select: '-__v -relatedProduct' });
-        //console.log(userModel);
-        const productIndex = userModel.cart.findIndex(item => item.product._id.equals(productModel._id));
 
+        if (!userModel.cart || !Array.isArray(userModel.cart)) {
+            throw new Error('ค่า userModel.cart ไม่ถูกต้อง');
+        }
+
+        const productIndex = userModel.cart.findIndex(item => item.product && item.product._id && item.product._id.equals(productModel._id));
+
+        console.log(productIndex);
         if (productIndex !== -1) {
             userModel.cart[productIndex].quantity += 1;
         } else {
@@ -127,6 +133,7 @@ async function saveAddress(userData) {
 async function placeOrder(orderData) {
     try {
         const { cart, totalPrice, address, userId } = orderData;
+        console.log(orderData);
         let products = [];
 
         for (let i = 0; i < cart.length; i++) {
@@ -164,8 +171,10 @@ async function placeOrder(orderData) {
 
 
 async function myOrder(id) {
-    try {      
-        let orders = await order.find({ userId: id }).populate({ path: 'products.product', select: '-__v -relatedProduct' });
+    try {
+        let orders = await order.find({ userId: id })
+            .select('-__v')
+            .populate({ path: 'products.product', select: '-__v -relatedProduct' });
         return orders;
     } catch (e) {
         throw new Error(e.message);
@@ -174,32 +183,86 @@ async function myOrder(id) {
 
 //merchant get order
 async function merchantOrder(id) {
-    try {      
-        let orders = await order.find({ storeId: id })
-        .populate({ path: 'products.product', select: '-__v -relatedProduct' });
-        //console.log(orders[0].products);
+    try {
+        let orders = await order
+            .find({ storeId: id })
+            .select('-__v')
+            .populate({ path: 'products.product', select: '-__v -relatedProduct' });
+
         let merchantOrder = [];
-        let productinOrder = [];
-        //console.log(orders[0].products[0]);
-      
-       
 
         for (var i = 0; i < orders.length; i++) {
-            for (var j = 0; j < orders[i].products.length; j++) {
-               
-                if (orders[i].products[j].product.storeId.toString() === id) {
-                    productinOrder.push(orders[i].products[j].product);
-                    merchantOrder.push(orders[i]);
-                    break; // เมื่อเจอสินค้าที่ตรงกับ storeId จะไม่ต้องวนลูปต่อในสินค้าอื่น
+            let orderProducts = orders[i].products;
+            let productInOrder = [];
+            let totalPrice = 0;
+            let statusProduct;
+            let productQuantity;
+            for (var j = 0; j < orderProducts.length; j++) {
+                if (orderProducts[j].product.storeId.toString() === id) {
+                    let product = orderProducts[j].product;
+                    product.statusProduct = orders[i].products[j].statusProductOrder;
+                    
+                    let productPrice = product.productPrice || 0;
+                    let quantity = orders[i].products[j].productSKU || 0;
+                    totalPrice += productPrice * quantity;
+                    statusProduct = orders[i].products[j].statusProductOrder;
+                    productQuantity = orders[i].products[j].productSKU;
+                    let modifiedProduct = {
+                        ...orderProducts[j].product._doc,
+                        productQuantity : productQuantity,
+                        statusProductOrder: statusProduct
+                    };
+                    productInOrder.push(modifiedProduct);
                 }
             }
+
+            if (productInOrder.length > 0) {
+                let modifiedOrder = {
+                    ...orders[i]._doc,
+                    products: productInOrder,
+                    totalPrice: totalPrice,
+                 
+                };
+                merchantOrder.push(modifiedOrder);
+            }
         }
-        console.log(merchantOrder);
+
         return merchantOrder;
     } catch (e) {
         throw new Error(e.message);
     }
 }
+
+
+async function changeStatus(data) {
+    try {
+        const { orderId, storeId, status, productId } = data;
+        let updatedOrder;
+        let orders = await order.findById(orderId)
+            .select('-__v')
+            .populate({ path: 'products.product', select: '-__v -relatedProduct' });
+
+        if (!orders) {
+            throw new Error('Order not found');
+        }       
+        for(var i = 0 ; i < orders.products.length; i ++){
+            if(  orders.products[i].product._id.toString() === productId){
+                if(orders.products[i].product.storeId.toString() === storeId){
+                    orders.products[i].statusProductOrder = status;
+                    updatedOrder = await orders.save();
+                }else{
+                    return "Data not math";
+                }
+            }   
+        }
+        return updatedOrder;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
+
+
 
 module.exports = {
     login,
@@ -209,5 +272,6 @@ module.exports = {
     saveAddress,
     placeOrder,
     myOrder,
-    merchantOrder
+    merchantOrder,
+    changeStatus
 }
