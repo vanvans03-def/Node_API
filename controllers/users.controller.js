@@ -106,3 +106,14 @@ exports.changeStatus = async (req, res, next) => {
     next(e);
   }
 };
+
+
+exports.analytics = async (req, res, next) => {
+  try {
+    const data = req.body;
+    const orders = await userService.analytics(data);
+    res.json(orders);
+  } catch (e) {
+    next(e);
+  }
+};

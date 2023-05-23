@@ -46,6 +46,7 @@ router.post("/order", userController.placeOrder);
 router.get("/order-me/:id", userController.myOrder);
 router.get("/order-merchant/:id", userController.merchantOrder);
 router.post("/change-order-status", userController.changeStatus);
+router.get("/analytics",userController.analytics);
 //router.post("/productprices", productpricesController.create);
 //router.get("/productprices", registerstoreController.findAll);
 //router.get("/productprices/:id", registerstoreController.findOne);

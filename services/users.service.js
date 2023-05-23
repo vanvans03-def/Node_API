@@ -4,7 +4,7 @@ const auth = require("../middleware/auth");
 const { product } = require("../models/product.model");
 const mongoose = require('mongoose');
 const { order } = require('../models/order.model');
-
+const categoriesService = require("../services/categories.service");
 async function login({ email, password }, callback) {
     const userModel = await user.findOne({ email }).select("+password -__v -relatedProduct").lean();
     if (userModel != null) {
@@ -247,6 +247,7 @@ async function changeStatus(data) {
         }       
         for(var i = 0 ; i < orders.products.length; i ++){
             if(  orders.products[i].product._id.toString() === productId){
+                
                 if(orders.products[i].product.storeId.toString() === storeId){
                     orders.products[i].statusProductOrder = status;
                     updatedOrder = await orders.save();
@@ -262,6 +263,35 @@ async function changeStatus(data) {
 }
 
 
+async function analytics(data) {
+    try {
+        const {  } = data;
+        const orders = await order.find({});
+       
+        let totalEarnings = 0;
+        let categoryId;
+        let productEarnings;
+        for(let i = 0 ; i < orders.length ; i++){
+            for(let j = 0 ; j < orders[i].products.length; j++){
+                let productId = orders[i].products[j].product._id.toString();
+                let products = await product.findById(productId);  // แก้ไขตรงนี้
+                totalEarnings += orders[i].products[j].productSKU * products.productPrice;
+                console.log()
+                categoryId = products.category.toString();
+                productEarnings = await categoriesService.getCategoryById(categoryId);
+             }
+        }
+        console.log(totalEarnings);
+       let earnnings = {
+        totalEarnings,
+        productEarnings
+       }
+        return earnnings;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
 
 
 module.exports = {
@@ -273,5 +303,6 @@ module.exports = {
     placeOrder,
     myOrder,
     merchantOrder,
-    changeStatus
+    changeStatus,
+    analytics
 }
