@@ -2,6 +2,7 @@ const { user } = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const auth = require("../middleware/auth");
 const { product } = require("../models/product.model");
+const { category } = require("../models/category.model");
 const mongoose = require('mongoose');
 const { order } = require('../models/order.model');
 const categoriesService = require("../services/categories.service");
@@ -265,26 +266,46 @@ async function changeStatus(data) {
 
 async function analytics(data) {
     try {
-        const {  } = data;
+        const { storeId } = data;
         const orders = await order.find({});
        
         let totalEarnings = 0;
-        let categoryId;
-        let productEarnings;
+        let categoryId;      
+        let categories;
+        let fruitEarnings = 0;
+        let vegetableEarnings = 0;
+        let drtFruitEarnings = 0;
+
         for(let i = 0 ; i < orders.length ; i++){
             for(let j = 0 ; j < orders[i].products.length; j++){
                 let productId = orders[i].products[j].product._id.toString();
-                let products = await product.findById(productId);  // แก้ไขตรงนี้
-                totalEarnings += orders[i].products[j].productSKU * products.productPrice;
-                console.log()
-                categoryId = products.category.toString();
-                productEarnings = await categoriesService.getCategoryById(categoryId);
+                let products = await product.findById(productId);
+                
+                if(products.storeId.toString() === storeId){
+                    totalEarnings += orders[i].products[j].productSKU * products.productPrice;
+                    categoryId = products.category.toString();
+                    categories = await category.findById(categoryId);
+                    if(categories.categoryName === "Fruit"){
+                        fruitEarnings += orders[i].products[j].productSKU * products.productPrice;
+                        
+                    }
+                    if(categories.categoryName === "Vegetable"){
+                        vegetableEarnings += orders[i].products[j].productSKU * products.productPrice;
+                    }
+                    if(categories.categoryName === "Dry Friut"){
+                        drtFruitEarnings += orders[i].products[j].productSKU * products.productPrice;
+                    }
+                }
+               
              }
         }
-        console.log(totalEarnings);
+     
+       
        let earnnings = {
         totalEarnings,
-        productEarnings
+        fruitEarnings,
+        vegetableEarnings,
+        drtFruitEarnings
        }
         return earnnings;
     } catch (error) {
