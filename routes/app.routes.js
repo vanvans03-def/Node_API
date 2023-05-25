@@ -11,7 +11,7 @@ const Product = require("../models/product.model");
 const provinceController = require("../controllers/provinces.controllers");
 
 router.get("/province", provinceController.findAll);
-
+router.post("/generateQR", userController.generateQR);
 
 router.post("/category", categoryController.create);
 router.get("/category", categoryController.findAll);

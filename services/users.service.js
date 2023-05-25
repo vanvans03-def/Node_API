@@ -6,6 +6,8 @@ const { category } = require("../models/category.model");
 const mongoose = require('mongoose');
 const { order } = require('../models/order.model');
 const categoriesService = require("../services/categories.service");
+const generatePayload = require('promptpay-qr')
+
 async function login({ email, password }, callback) {
     const userModel = await user.findOne({ email }).select("+password -__v -relatedProduct").lean();
     if (userModel != null) {
@@ -313,6 +315,16 @@ async function analytics(data) {
     }
 }
 
+async function generateQR(data) {
+    try {
+        const { totalAmount,storeTel } = data;
+        const payload = generatePayload(storeTel, { totalAmount });
+        
+        return payload ;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
 
 
 module.exports = {
@@ -325,5 +337,6 @@ module.exports = {
     myOrder,
     merchantOrder,
     changeStatus,
-    analytics
+    analytics,
+    generateQR
 }
