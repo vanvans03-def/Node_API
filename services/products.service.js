@@ -151,6 +151,8 @@ async function searchProducts(productName) {
   
     return product.aggregate(pipeline);
   }
+
+  
   async function rateProduct(productId, userId, rating) {
     try {
       let product = await product.findById(productId);

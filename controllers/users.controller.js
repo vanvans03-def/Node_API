@@ -119,34 +119,35 @@ exports.analytics = async (req, res, next) => {
   }
 };
 
+
 exports.generateQR = async (req, res, next) => {
   try {
     const data = req.body;
-    const payload = await userService.generateQR(data);
+    const payload = await userService.generateQR(data); // เรียกใช้ฟังก์ชัน generateQR
+    
     const option = {
       color: {
-          dark: '#000',
-          light: '#fff'
+        dark: '#000',
+        light: '#fff'
       }
-  }
+    };
 
-  QRCode.toDataURL(payload, option, (err, url) => {
-    if(err) {
-        console.log('generate fail')
+    QRCode.toDataURL(payload, option, (err, url) => {
+      if (err) {
+        console.log('generate fail');
         return res.status(400).json({
-            RespCode: 400,
-            RespMessage: 'bad : ' + err
-        })  
-    } 
-    else {
+          RespCode: 400,
+          RespMessage: 'bad: ' + err
+        });
+      } else {
         return res.status(200).json({
-            RespCode: 200,
-            RespMessage: 'good',
-            Result: url
-        })  
-    }
+          RespCode: 200,
+          RespMessage: 'good',
+          Result: url
+        });
+      }
+    });
 
-})
   } catch (e) {
     next(e);
   }

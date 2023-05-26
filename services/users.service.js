@@ -315,16 +315,17 @@ async function analytics(data) {
     }
 }
 
+
 async function generateQR(data) {
     try {
-        const { totalAmount,storeTel } = data;
-        const payload = generatePayload(storeTel, { totalAmount });
-        
-        return payload ;
+      const { totalAmount, storeTel } = data;
+      const amount =  parseFloat(totalAmount)
+      const payload = generatePayload(storeTel, { amount: amount });
+      return payload;
     } catch (error) {
-        throw new Error(error.message);
+      throw new Error(error.message);
     }
-}
+  }
 
 
 module.exports = {

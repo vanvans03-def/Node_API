@@ -9,7 +9,7 @@ const router = express.Router();
 const { authenticationToken } = require("../middleware/auth");
 const Product = require("../models/product.model");
 const provinceController = require("../controllers/provinces.controllers");
-
+const productpricesController = require("../controllers/productprice.controller");
 router.get("/province", provinceController.findAll);
 router.post("/generateQR", userController.generateQR);
 
@@ -50,6 +50,10 @@ router.post("/analytics",userController.analytics);
 //router.post("/productprices", productpricesController.create);
 //router.get("/productprices", registerstoreController.findAll);
 //router.get("/productprices/:id", registerstoreController.findOne);
+
+router.get("/productprices", productpricesController.findAll);
+router.get('/productprices/search', productpricesController.searchProductPrices);
+router.get('/productprices/:id', productpricesController.findById);
 
 /*
 router.post("/slider",sliderController.create);
