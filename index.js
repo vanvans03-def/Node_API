@@ -45,20 +45,21 @@ const fruits = ["P13001", "P13002", "P13003", "P13004", "P13005", "P13006", "P13
 const axios = require('axios');
 const cron = require('node-cron');
 const { ProductPrice } = require('./models/productprice.model');
-
-let date = new Date();
-let yesterday = new Date(date.getDate() - 1);
-let formattedDate = date.toISOString().split('T')[0];
+let currentDate = new Date()
+let yesterday = new Date(currentDate)
+yesterday.setDate(yesterday.getDate() - 1)
+ 
 let formattedyesterday = yesterday.toISOString().split('T')[0];
+console.log(formattedyesterday);
 
 async function fetchDataAndSaveAll() {
   try {
     for (let i = 0; i < fruits.length; i++) {
       try {
         const response = await axios.get(
-          `https://dataapi.moc.go.th/gis-product-prices?product_id=${fruits[i]}&from_date=${formattedDate}&to_date=${formattedDate}`
+          `https://dataapi.moc.go.th/gis-product-prices?product_id=${fruits[i]}&from_date=${formattedyesterday}&to_date=${formattedyesterday}`
         );
-       
+
         const { product_id, product_name, category_name, group_name, unit, price_list } = response.data;
 
         if (Array.isArray(price_list)) {

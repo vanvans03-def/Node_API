@@ -22,7 +22,7 @@ router.delete("/category/:id", categoryController.delete);
 router.post("/register", userController.register);
 router.post("/login", userController.login);
 
-router.get("/product/search/:productName", productController.searchProduct);
+router.get("/product/search/", productController.searchProduct);
 router.post("/product", productController.create);
 router.get("/product", productController.findAll);
 router.get("/product/:id", productController.findOne);

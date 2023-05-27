@@ -145,6 +145,9 @@ async function searchProducts(productName) {
           productSKU: 1,
           productType: 1,
           stockStatus: 1,
+          storeId:1,
+          ratings:1,
+
         },
       },
     ];

@@ -142,7 +142,7 @@ exports.delete = (req, res, next) => {
 
 exports.searchProduct = async (req, res, next) => {
     try {
-        const keyword = req.params.productName;
+        const keyword = req.query;
         const products = await productServices.searchProducts(keyword);
 
         return res.status(200).send({

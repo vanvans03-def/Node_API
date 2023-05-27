@@ -26,7 +26,7 @@ const product = mongoose.model(
                 required: true,
             },
             productSalePrice: { //แกจาก ProductSalePrice
-                type: Number,
+                type: String,
                 required: true,
                 default: 0
             },

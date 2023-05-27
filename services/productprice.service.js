@@ -2,7 +2,7 @@ const { ProductPrice } = require('../models/productprice.model');
 
 async function getAllProductPrices() {
   try {
-    const productPrices = await ProductPrice.find({});
+    const productPrices = await ProductPrice.find({}).select('-__v');;
     return productPrices;
   } catch (error) {
     throw new Error(error);
@@ -29,6 +29,7 @@ async function searchProductPrices(productName) {
         { productName: { $regex: productName, $options: 'i' } }
       ]
     });
+   
     return productPrices;
   } catch (error) {
     throw new Error('Failed to search product prices');
