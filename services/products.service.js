@@ -59,11 +59,10 @@ async function getProducts(params, callback) {
     let page = (Math.abs(params.page) || 1) - 1;
 
     product
-    .find(condition, "productName category productShortDescription productDescription productPrice productSalePrice productImage productSKU productType stockStatus storeId ratings")
-    //.populate("category", "categoryName categoryImage")
-    .limit(perPage)
-    .skip(perPage * page)
+    .find({}).select( '-__v -relatedProduct')
+   
     .then((response) => {
+     
         return callback(null, response);
     })
     .catch((error) => {
