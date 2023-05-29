@@ -6,14 +6,14 @@
         "use": "@vercel/node"
       }
     ],
-    "functions": {
-      "index": {
-        "memory": 512,
-        "maxDuration": 60
-      },
-      "cron": {
-        "schedule": "10 17 * * *"
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "index.js",
+        "headers": {
+          "x-vercel-cron": "1"
+        }
       }
-    }
+    ]
   }
   
