@@ -48,7 +48,7 @@ const { ProductPrice } = require('./models/productprice.model');
 let currentDate = new Date()
 let yesterday = new Date(currentDate)
 yesterday.setDate(yesterday.getDate() - 1)
- 
+
 let formattedyesterday = yesterday.toISOString().split('T')[0];
 console.log(formattedyesterday);
 
@@ -80,7 +80,7 @@ async function fetchDataAndSaveAll() {
         } else {
           console.error('Invalid price_list data:', price_list);
         }
-      } catch(error) {
+      } catch (error) {
         console.error('Error saving data', error);
       }
     }
@@ -92,7 +92,7 @@ async function fetchDataAndSaveAll() {
 async function checkApiAvailability() {
   try {
     const response = await axios.get(`https://dataapi.moc.go.th/gis-product-prices?product_id=${fruits[0]}&from_date=${formattedyesterday}&to_date=${formattedyesterday}`);
-  
+
     if (response.status === 200) {
       console.log('API is available');
       return true;
@@ -103,21 +103,27 @@ async function checkApiAvailability() {
   return false;
 }
 
-//นาที ชั่วโมง 
-cron.schedule('10 17 * * *', async () => {
+module.exports = async (req, res) => {
   try {
-    const isApiAvailable = await checkApiAvailability();
+    const currentDate = new Date().toLocaleString('en-US', { timeZone: 'Asia/Bangkok' });
+    const [date, time] = currentDate.split(', ');
+    const [hour, minute] = time.split(':');
 
-    if (isApiAvailable) {
+    if (hour === '0' && minute === '10') {
+      const isApiAvailable = await checkApiAvailability();
+      if (isApiAvailable) {
         await ProductPrice.deleteMany({});
-      console.log('Old data deleted successfully');
-      await fetchDataAndSaveAll();
-      console.log('Data fetching and saving complete');
-    } else {
-      console.error('Cannot fetch data. API is not available');
+        await fetchDataAndSaveAll();
+        console.log('Data fetching and saving complete');
+      } else {
+        console.error('Cannot fetch data. API is not available');
+      }
     }
+
+    res.status(200).send('Cron job completed');
   } catch (error) {
-    console.error('Error fetching and saving data', error);
+    console.error('Error in cron job', error);
+    res.status(500).send('Internal Server Error');
   }
-});
+};
 
