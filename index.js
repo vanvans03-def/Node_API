@@ -104,7 +104,7 @@ async function checkApiAvailability() {
 }
 
 //นาที ชั่วโมง 
-cron.schedule('10 0 * * *', async () => {
+cron.schedule('10 17 * * *', async () => {
   try {
     const isApiAvailable = await checkApiAvailability();
 
