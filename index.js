@@ -1,14 +1,17 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const http = require("http");
+const socketIO = require("socket.io");
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIO(server);
+
 const { MONGO_DB_CONFIG } = require("./config/app.config");
 const errors = require("./middleware/errors.js");
-const swaggerUi = require("swagger-ui-express"),
-  swaggerDocument = require("./swagger.json");
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./swagger.json");
 const { category } = require("./models/category.model");
-
-
 
 mongoose.Promise = global.Promise;
 
@@ -22,7 +25,7 @@ mongoose
       console.log("Database Connected");
     },
     (error) => {
-      console.log("database can't be connected : " + error);
+      console.log("Database can't be connected: " + error);
     }
   );
 
@@ -34,32 +37,49 @@ app.get("/hello-world", (req, res) => {
 });
 
 app.use(express.json());
+var clients = {};
+const { chatModel } = require('./models/chat.model');
+io.on("connection", (socket) => {
+  console.log("connected");
+  console.log(socket.id, "has joined");
+
+  socket.on("signin", (id) => {
+    console.log(id);
+    clients[id] = socket;
+    console.log(clients);
+  });
+
+  socket.on("message", async (msg) => {
+    console.log(msg);
+    let targetId = msg.targetId;
+    if (clients[targetId]) clients[targetId].emit("message", msg);
+    
+    // บันทึกประวัติแชทลงในฐานข้อมูล
+    const chat = new chatModel({
+      senderId: msg.senderId,
+      receiverId: msg.receiverId,
+      message: msg.message
+    });
+    await chat.save();
+  });
+});
+
 
 app.use("/uploads", express.static("uploads"));
 app.use("/api", require("./routes/app.routes"));
 app.use(errors.errorHadler);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+const apiPort = 4000;
+const socketIOPort = 5000;
 
-app.listen(process.env.port || 4000, "0.0.0.0",function () {
-  console.log("Ready to go!!");
+server.listen(apiPort, "0.0.0.0", () => {
+  console.log(`API service running on port ${apiPort}`);
 });
 
-const cors = require("cors");
-var http = require("http");
-var server = http.createServer(app);
-var io = require("socket.io")(server,{
-  cors:{
-    origin:"*",
-  },
+io.listen(socketIOPort, () => {
+  console.log(`Socket.IO service running on port ${socketIOPort}`);
 });
-
-app.use(cors());
-io.on("connection", (socket) => {
-  console.log("connected");
-});
-
-
 
 
 

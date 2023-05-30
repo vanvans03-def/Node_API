@@ -1,26 +1,28 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
+// กำหนดโครงสร้างข้อมูลแชท
 const chatSchema = new mongoose.Schema({
-  sender: {
+  senderId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
+    ref: 'User', // ชื่อโมเดลผู้ใช้งานที่เกี่ยวข้อง
+    required: true
   },
-  receiver: {
+  receiverId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
+    ref: 'User', // ชื่อโมเดลผู้ใช้งานที่เกี่ยวข้อง
+    required: true
   },
   message: {
     type: String,
-    required: true,
+    required: true
   },
-  timestamp: {
+  createdAt: {
     type: Date,
-    default: Date.now,
-  },
+    default: Date.now
+  }
 });
 
+// สร้างโมเดลแชท
 const Chat = mongoose.model('Chat', chatSchema);
 
 module.exports = Chat;
