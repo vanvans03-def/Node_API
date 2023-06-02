@@ -146,8 +146,7 @@ async function checkApiAvailability() {
     );
 
     if (response.status === 200) {
-      console.log('API is available');
-      await ProductPrice.deleteMany({});
+      
       console.log('Old data deleted successfully');
       return true;
     }
@@ -162,7 +161,8 @@ async function runCronJob() {
     const isApiAvailable = await checkApiAvailability();
 
     if (isApiAvailable) {
-    
+      console.log('API is available');
+      await ProductPrice.deleteMany({});
       await fetchDataAndSaveAll();
       console.log('Data fetching and saving complete');
     } else {
