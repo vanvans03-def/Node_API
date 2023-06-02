@@ -146,8 +146,7 @@ async function checkApiAvailability() {
     );
 
     if (response.status === 200) {
-      
-      console.log('Old data deleted successfully');
+      console.log('API is available');
       return true;
     }
   } catch (error) {
@@ -161,10 +160,14 @@ async function runCronJob() {
     const isApiAvailable = await checkApiAvailability();
 
     if (isApiAvailable) {
-      console.log('API is available');
-      await ProductPrice.deleteMany({});
-      await fetchDataAndSaveAll();
-      console.log('Data fetching and saving complete');
+      const isDataDeleted = await ProductPrice.exists({});
+      
+      if (!isDataDeleted) {
+        await fetchDataAndSaveAll();
+        console.log('Data fetching and saving complete');
+      } else {
+        console.log('Data already deleted');
+      }
     } else {
       console.error('Cannot fetch data. API is not available');
     }
@@ -174,5 +177,5 @@ async function runCronJob() {
 }
 
 module.exports = async (req, res) => {
-  await runCronJob();
+  runCronJob();
 };
