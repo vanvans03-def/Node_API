@@ -158,10 +158,10 @@ async function runCronJob() {
     const isApiAvailable = await checkApiAvailability();
 
     if (isApiAvailable) {
-      await fetchDataAndSaveAll();
-      console.log('Data fetching and saving complete');
       await ProductPrice.deleteMany({});
       console.log('Old data deleted successfully');
+      await fetchDataAndSaveAll();
+      console.log('Data fetching and saving complete');
     } else {
       console.error('Cannot fetch data. API is not available');
     }
