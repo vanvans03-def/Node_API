@@ -114,28 +114,31 @@ async function fetchDataAndSaveAll() {
 
         if (Array.isArray(price_list)) {
           for (const { date, price_min, price_max } of price_list) {
-            const productprice = new ProductPrice({
-              productId: product_id,
-              productName: product_name,
-              categoryName: category_name,
-              groupName: group_name,
-              unit,
-              date: new Date(date),
-              priceMin: price_min,
-              priceMax: price_max,
-            });
-            await productprice.save();
+            const existingProductPrice = await ProductPrice.findOneAndUpdate(
+              { productId: product_id, date: new Date(date) },
+              {
+                productId: product_id,
+                productName: product_name,
+                categoryName: category_name,
+                groupName: group_name,
+                unit,
+                date: new Date(date),
+                priceMin: price_min,
+                priceMax: price_max,
+              },
+              { upsert: true }
+            );
+            console.log('Data saved/updated successfully:', existingProductPrice);
           }
-          console.log('Data saved successfully');
         } else {
           console.error('Invalid price_list data:', price_list);
         }
       } catch (error) {
-        console.error('Error saving data', error);
+        console.error('Error saving/updating data', error);
       }
     }
   } catch (error) {
-    console.error('Error saving data', error);
+    console.error('Error saving/updating data', error);
   }
 }
 
@@ -154,22 +157,22 @@ async function checkApiAvailability() {
   }
   return false;
 }
-// รอให้ fetchDataAndSaveAll() เสร็จสิ้นก่อนที่จะลบข้อมูล
+
 async function runCronJob() {
   try {
     const isApiAvailable = await checkApiAvailability();
 
     if (isApiAvailable) {
       await fetchDataAndSaveAll();
-      console.log('Data fetching and saving complete');
-    
+      console.log('Data fetching and saving/updating complete');
     } else {
       console.error('Cannot fetch data. API is not available');
     }
   } catch (error) {
-    console.error('Error fetching and saving data', error);
+    console.error('Error fetching and saving/updating data', error);
   }
 }
 
 // เรียกใช้งานฟังก์ชัน runCronJob()
 runCronJob();
+
