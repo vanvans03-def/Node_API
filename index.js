@@ -176,6 +176,5 @@ async function runCronJob() {
   }
 }
 
-module.exports = async (req, res) => {
   runCronJob();
-};
+
