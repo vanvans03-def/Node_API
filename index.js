@@ -155,23 +155,30 @@ async function checkApiAvailability() {
 
 async function runCronJob() {
   try {
-    const isApiAvailable = await checkApiAvailability();
-
-    if (isApiAvailable) {
-      await ProductPrice.deleteMany({});
-      console.log('Old data deleted successfully');
       await fetchDataAndSaveAll();
       console.log('Data fetching and saving complete');
-     
-    } else {
-      console.error('Cannot fetch data. API is not available');
-    }
+
   } catch (error) {
     console.error('Error fetching and saving data', error);
   }
 }
 
+async function CheckAPI() {
+  const isApiAvailable = await checkApiAvailability();
+
+  if (isApiAvailable) {
+    await ProductPrice.deleteMany({});
+    console.log('Old data deleted successfully');
+    return true;
+  } else {
+    console.error('Cannot fetch data. API is not available');
+    return false;
+  }
+}
 
 module.exports = async (req, res) => {
+ const status = await CheckAPI();
+ if(status){
   runCronJob();
+ } 
 };
