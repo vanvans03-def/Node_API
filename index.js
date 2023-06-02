@@ -154,20 +154,15 @@ async function checkApiAvailability() {
   }
   return false;
 }
-
+// รอให้ fetchDataAndSaveAll() เสร็จสิ้นก่อนที่จะลบข้อมูล
 async function runCronJob() {
   try {
     const isApiAvailable = await checkApiAvailability();
 
     if (isApiAvailable) {
-      const isDataDeleted = await ProductPrice.exists({});
-      
-      if (!isDataDeleted) {
-        await fetchDataAndSaveAll();
-        console.log('Data fetching and saving complete');
-      } else {
-        console.log('Data already deleted');
-      }
+      await fetchDataAndSaveAll();
+      console.log('Data fetching and saving complete');
+    
     } else {
       console.error('Cannot fetch data. API is not available');
     }
@@ -176,5 +171,5 @@ async function runCronJob() {
   }
 }
 
-  runCronJob();
-
+// เรียกใช้งานฟังก์ชัน runCronJob()
+runCronJob();
