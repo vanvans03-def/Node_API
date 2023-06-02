@@ -95,12 +95,13 @@ const fruits = ["P13001", "P13002", "P13003", "P13004", "P13005", "P13006", "P13
 const axios = require('axios');
 const { ProductPrice } = require('./models/productprice.model');
 
-let currentDate = new Date()
-let yesterday = new Date(currentDate)
-yesterday.setDate(yesterday.getDate() - 1)
+let currentDate = new Date();
+let yesterday = new Date(currentDate);
+yesterday.setDate(yesterday.getDate() - 1);
 
 let formattedyesterday = yesterday.toISOString().split('T')[0];
 console.log(formattedyesterday);
+
 async function fetchDataAndSaveAll() {
   try {
     for (let i = 0; i < fruits.length; i++) {
@@ -129,7 +130,7 @@ async function fetchDataAndSaveAll() {
         } else {
           console.error('Invalid price_list data:', price_list);
         }
-      } catch(error) {
+      } catch (error) {
         console.error('Error saving data', error);
       }
     }
@@ -140,10 +141,14 @@ async function fetchDataAndSaveAll() {
 
 async function checkApiAvailability() {
   try {
-    const response = await axios.get(`https://dataapi.moc.go.th/gis-product-prices?product_id=${fruits[0]}&from_date=${formattedyesterday}&to_date=${formattedyesterday}`);
+    const response = await axios.get(
+      `https://dataapi.moc.go.th/gis-product-prices?product_id=${fruits[0]}&from_date=${formattedyesterday}&to_date=${formattedyesterday}`
+    );
 
     if (response.status === 200) {
       console.log('API is available');
+      await ProductPrice.deleteMany({});
+      console.log('Old data deleted successfully');
       return true;
     }
   } catch (error) {
@@ -152,33 +157,22 @@ async function checkApiAvailability() {
   return false;
 }
 
-
 async function runCronJob() {
   try {
+    const isApiAvailable = await checkApiAvailability();
+
+    if (isApiAvailable) {
+    
       await fetchDataAndSaveAll();
       console.log('Data fetching and saving complete');
-
+    } else {
+      console.error('Cannot fetch data. API is not available');
+    }
   } catch (error) {
     console.error('Error fetching and saving data', error);
   }
 }
 
-async function CheckAPI() {
-  const isApiAvailable = await checkApiAvailability();
-
-  if (isApiAvailable) {
-    await ProductPrice.deleteMany({});
-    console.log('Old data deleted successfully');
-    return true;
-  } else {
-    console.error('Cannot fetch data. API is not available');
-    return false;
-  }
-}
-
 module.exports = async (req, res) => {
- const status = await CheckAPI();
- if(status){
-  runCronJob();
- } 
+  await runCronJob();
 };
