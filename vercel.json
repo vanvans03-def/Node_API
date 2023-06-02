@@ -14,6 +14,11 @@
           "x-vercel-cron": "1"
         }
       }
-    ]
+    ],
+   
+    "crons": [{
+      "path": "/api/cron",
+      "schedule": "11 16 * * *"
+    }]
   }
   
