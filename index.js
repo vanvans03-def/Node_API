@@ -152,7 +152,7 @@ async function checkApiAvailability() {
   return false;
 }
 
-// รอให้ fetchDataAndSaveAll() เสร็จสิ้นก่อนที่จะลบข้อมูล
+
 async function runCronJob() {
   try {
     const isApiAvailable = await checkApiAvailability();
@@ -162,6 +162,7 @@ async function runCronJob() {
       console.log('Old data deleted successfully');
       await fetchDataAndSaveAll();
       console.log('Data fetching and saving complete');
+     
     } else {
       console.error('Cannot fetch data. API is not available');
     }
@@ -170,5 +171,7 @@ async function runCronJob() {
   }
 }
 
-// เรียกใช้งานฟังก์ชัน runCronJob()
-runCronJob();
+
+module.exports = async (req, res) => {
+  runCronJob();
+};
