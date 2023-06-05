@@ -155,3 +155,18 @@ exports.getStoreByuserId = async (req, res, next) => {
       next(e);
     }
 }
+
+exports.searchStore = async (req, res, next) => {
+    try {
+        const keyword = req.query.keyword;
+       console.log(keyword)
+        const results = await storeServices.searchStore(keyword);
+
+        return res.status(200).send({
+            message: "Success",
+            data: results,
+        });
+    } catch (error) {
+        return next(error);
+    }
+};

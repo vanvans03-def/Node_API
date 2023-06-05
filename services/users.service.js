@@ -135,6 +135,7 @@ async function saveAddress(userData) {
 //order product
 async function placeOrder(orderData) {
     try {
+
         const { cart, totalPrice, address, userId } = orderData;
         console.log(orderData);
         let products = [];
@@ -166,6 +167,8 @@ async function placeOrder(orderData) {
             orderedAt: new Date().getTime(),
         });
         orderModel = await orderModel.save();
+
+  
         return orderModel;
     } catch (e) {
         throw new Error(e.message);

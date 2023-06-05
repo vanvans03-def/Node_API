@@ -1,7 +1,7 @@
 const { product } = require("../models/product.model");
 const { category } = require("../models/category.model");
 const { MONGO_DB_CONFIG } = require("../config/app.config");
-
+const { ProductPrice } = require('../models/productprice.model');
 async function createProduct(params, callback) {
     if(!params.productName) {
         return callback(
@@ -40,35 +40,55 @@ async function createProduct(params, callback) {
         });
 }
 
+
 async function getProducts(params, callback) {
-    const productName = params.productName;
-    const categoryId = params.categoryId;
-    var condition = {};
+  const productName = params.productName;
+  const categoryId = params.categoryId;
+  var condition = {};
+  
+  if (productName) {
+  condition["productName"] = {
+  $regex: new RegExp(productName), $options: "i"
+  };
+  }
+  
+  if(categoryId) {
+  condition["categoryId"] = categoryId;
+  }
+  
+  let perPage = Math.abs(params.pageSize) || MONGO_DB_CONFIG.PAGE_SIZE;
+  let page = (Math.abs(params.page) || 1) - 1;
+  
+  product
+  .find(condition)
+  .select('-__v -relatedProduct')
+  .then((response) => {
+  // Calculate avgRating for each product
+  response.forEach((product) => {
+  var avgRating = 0;
+  var totalRating = 0;
+  if (product.ratings && product.ratings.length > 0) { // แก้ไขตรงนี้
+  for (var i = 0; i < product.ratings.length; i++) { // แก้ไขตรงนี้
+  totalRating += product.ratings[i].rating; // แก้ไขตรงนี้
+  }
+  avgRating = totalRating / product.ratings.length; // แก้ไขตรงนี้
+  }
+  product.avgRating = avgRating; // แก้ไขตรงนี้
+  });
+  
+  
+    // Sort the products based on avgRating in descending order
+    response.sort((a, b) => b.avgRating - a.avgRating);
+  
+    return callback(null, response);
+  })
+  .catch((error) => {
+  return callback(error);
+  });
+  }
 
-    if (productName) {
-        condition["productName"] = {
-            $regex: new RegExp(productName), $options: "i"
-        };
-    }
 
-    if(categoryId) {
-        condition["categoryId"] = categoryId;
-    }
 
-    let perPage = Math.abs(params.pageSize) || MONGO_DB_CONFIG.PAGE_SIZE;
-    let page = (Math.abs(params.page) || 1) - 1;
-
-    product
-    .find({}).select( '-__v -relatedProduct')
-   
-    .then((response) => {
-     
-        return callback(null, response);
-    })
-    .catch((error) => {
-        return callback(error);
-    });
-}
 
 
 async function getProductById(params, callback) {
@@ -154,34 +174,38 @@ async function searchProducts(productName) {
     return product.aggregate(pipeline);
   }
 
-  
-  async function rateProduct(productId, userId, rating) {
-    try {
-      let product = await product.findById(productId);
-     
-      if (!product) {
-        throw new Error(`Product with ID ${productId} not found`);
-      }else{
-    
-      for (let i = 0; i < product.ratings.length; i++) {
-        if (product.ratings[i].userId == userId) {
-          product.ratings.splice(i, 1);
+  async function rateProduct(data) {
+  try {
+    const { productId, userId, rating } = data;
+    console.log(productId);
+
+    let productModel = await product.findById(productId);
+    console.log(productModel)
+
+    if (!productModel) {
+      throw new Error(`Product with ID ${productId} not found`);
+    } else {
+      for (let i = 0; i < productModel.ratings.length; i++) {
+        if (productModel.ratings[i].userId == userId) {
+          productModel.ratings.splice(i, 1);
           break;
         }
-      }}
-    
-      const ratingSchema = {
-        userId,
-        rating,
-      };
-    
-      product.ratings.push(ratingSchema);
-      product = await product.save();
-      return product;
-    } catch (error) {
-      throw error;
+      }
     }
+
+    const ratingSchema = {
+      userId,
+      rating,
+    };
+
+    productModel.ratings.push(ratingSchema);
+    productModel = await productModel.save();
+    return productModel;
+  } catch (error) {
+    throw error;
   }
+}
+
   
   async function getProductsByStoreId(id, message) {
     try {      
@@ -195,6 +219,45 @@ async function searchProducts(productName) {
   }
   
   
+
+
+  async function getDealOfDay() {
+    try {
+      let products = await product.find({}).select('-__v -relatedProduct');
+      const productprices = await ProductPrice.find({}).select('-__v');
+      
+      products.sort((a, b) => {
+        const discountA = calculateDiscount(a);
+        const discountB = calculateDiscount(b);
+        return discountB - discountA;
+      });
+      
+      function calculateDiscount(product) {
+        let discount = 0;
+        let maxDiscount = -Infinity; // ใช้ค่าเริ่มต้นเป็น Infinity สำหรับการหาค่าสูงสุด
+        
+        for (let i = 0; i < productprices.length; i++) {
+          if (product.productSalePrice == productprices[i].productId) {
+            const maxPrice = productprices[i].priceMax;
+            const currentDiscount = maxPrice -product.productPrice ;
+           // console.log(product.productName+" "+" ราคาลด  "+currentDiscount)
+            // อัพเดทค่าสูงสุดถ้าพบส่วนลดที่มากกว่า
+            maxDiscount = Math.max(maxDiscount, currentDiscount);
+            
+            break;
+          }
+        }
+        
+        return maxDiscount;
+      }
+      
+      return products;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+  
+  
 module.exports = {
     createProduct,
     getProducts,
@@ -203,7 +266,8 @@ module.exports = {
     deleteProduct,
     searchProducts,
     rateProduct,
-    getProductsByStoreId
+    getProductsByStoreId,
+    getDealOfDay
 }
 
 

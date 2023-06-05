@@ -142,7 +142,8 @@ exports.delete = (req, res, next) => {
 
 exports.searchProduct = async (req, res, next) => {
     try {
-        const keyword = req.query;
+        const keyword = req.query.keyword;
+       
         const products = await productServices.searchProducts(keyword);
 
         return res.status(200).send({
@@ -154,10 +155,8 @@ exports.searchProduct = async (req, res, next) => {
     }
 };
 exports.rateProduct = (req, res, next) => {
-    const { productId, rating } = req.body;
-    const userId = req.user._id;
-  
-    productServices.rateProduct(productId, userId, rating)
+    const data = req.body;
+    productServices.rateProduct(data)
       .then((product) => {
         res.status(200).send({
           message: "Rating updated successfully",
@@ -181,4 +180,11 @@ exports.rateProduct = (req, res, next) => {
     }
   };
   
-  
+  exports.getDealOfDay = async (req, res) => {
+    try {
+      const product = await productServices.getDealOfDay();
+      res.json(product);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };

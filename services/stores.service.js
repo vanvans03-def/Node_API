@@ -133,6 +133,18 @@ async function getStoreByuserId(id, message) {
 }
 
 
+async function searchStore(keyword) {
+  const results = await store.find({
+    $or: [
+      { storeName: new RegExp(keyword, "i") },
+      { storeDescription: new RegExp(keyword, "i") },
+    ]
+  }).lean().exec();
+
+  console.log(results); // เพิ่มบรรทัดนี้เพื่อตรวจสอบผลลัพธ์ที่คืนค่ามา
+
+  return results;
+}
 
 
   
@@ -143,5 +155,6 @@ module.exports = {
     getStoreById,
     updateStore,
     deleteStore,
-    getStoreByuserId
+    getStoreByuserId,
+    searchStore
 }
