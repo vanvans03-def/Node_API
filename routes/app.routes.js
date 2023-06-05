@@ -42,9 +42,12 @@ router.get("/product", productController.findAll);
 router.get("/product/:id", productController.findOne);
 router.put("/product/:id", productController.update);
 router.delete("/product/:id", productController.delete);
-router.post("/rate-product",authenticationToken,productController.rateProduct);
+router.post("/rate-product",productController.rateProduct);
 router.get('/product/store/:storeId',productController.getProductByStoreId);
+router.get('/deal-of-day', productController.getDealOfDay);
 
+
+router.get("/store/search/", storeController.searchStore);
 router.post("/store", storeController.create);
 router.get("/store", storeController.findAll);
 router.get("/store/:id", storeController.findOne);
