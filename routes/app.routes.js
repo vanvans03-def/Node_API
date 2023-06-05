@@ -10,19 +10,10 @@ const { authenticationToken } = require("../middleware/auth");
 const Product = require("../models/product.model");
 const provinceController = require("../controllers/provinces.controllers");
 const productpricesController = require("../controllers/productprice.controller");
+const chatController = require("../controllers/chat.controller");
 
-const ChatController = require('../controllers/chat.controller');
-const ChatService = require('../services/chat.service');
-const ChatModel = require('../models/chat.model');
 
-// Create instances
-const chatModel = new ChatModel();
-const chatService = new ChatService(chatModel);
-const chatController = new ChatController(chatService);
-
-router.post('/chat', chatController.createMessage.bind(chatController));
-router.get('/chat/:roomId', chatController.getMessagesByRoomId.bind(chatController));
-
+router.post('/chat',chatController.loadChatFromDatabase );
 
 router.get("/province", provinceController.findAll);
 router.post("/generateQR", userController.generateQR);
