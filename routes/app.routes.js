@@ -14,6 +14,7 @@ const chatController = require("../controllers/chat.controller");
 
 
 router.post('/chat',chatController.loadChatFromDatabase );
+router.get('/chat-byUID/',chatController.getChatByUID );
 
 router.get("/province", provinceController.findAll);
 router.post("/generateQR", userController.generateQR);

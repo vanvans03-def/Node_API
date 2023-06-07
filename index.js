@@ -98,14 +98,15 @@ const fruits = ["P13001", "P13002", "P13003", "P13004", "P13005", "P13006", "P13
 const axios = require('axios');
 const { ProductPrice } = require('./models/productprice.model');
 
-let currentDate = new Date();
+
+async function fetchDataAndSaveAll() {
+  let currentDate = new Date();
 let yesterday = new Date(currentDate);
 yesterday.setDate(yesterday.getDate() - 1);
 
 let formattedyesterday = yesterday.toISOString().split('T')[0];
-console.log(formattedyesterday);
 
-async function fetchDataAndSaveAll() {
+
   try {
     for (let i = 0; i < fruits.length; i++) {
       try {
@@ -146,6 +147,12 @@ async function fetchDataAndSaveAll() {
 }
 
 async function checkApiAvailability() {
+  let currentDate = new Date();
+  let yesterday = new Date(currentDate);
+  yesterday.setDate(yesterday.getDate() - 1);
+  
+  let formattedyesterday = yesterday.toISOString().split('T')[0];
+  
   try {
     const response = await axios.get(
       `https://dataapi.moc.go.th/gis-product-prices?product_id=${fruits[0]}&from_date=${formattedyesterday}&to_date=${formattedyesterday}`

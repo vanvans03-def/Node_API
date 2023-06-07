@@ -16,6 +16,17 @@ async function loadChatFromDatabase(data) {
   }
 }
 
+async function getChatByUID(data){
+try {
+  const uid = data;
+  const chatMessages = await ChatModel.find({uid});
+  return chatMessages;
+} catch (error) {
+  throw new Error('Failed to load chat messages from the database.');
+}
+}
+
 module.exports = {
   loadChatFromDatabase,
+  getChatByUID
 };
