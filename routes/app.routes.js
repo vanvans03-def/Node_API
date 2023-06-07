@@ -25,8 +25,10 @@ router.get("/category/:id", categoryController.findOne);
 router.put("/category/:id", categoryController.update);
 router.delete("/category/:id", categoryController.delete);
 
+router.get("/getUserData/:id",userController.getUserData);
 router.post("/register", userController.register);
 router.post("/login", userController.login);
+
 
 router.get("/product/search/", productController.searchProduct);
 router.post("/product", productController.create);

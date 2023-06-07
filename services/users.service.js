@@ -180,7 +180,9 @@ async function myOrder(id) {
     try {
         let orders = await order.find({ userId: id })
             .select('-__v')
-            .populate({ path: 'products.product', select: '-__v -relatedProduct' });
+            .populate({ path: 'products.product', select: '-__v -relatedProduct' })
+            .sort({orderedAt:-1});
+            
         return orders;
     } catch (e) {
         throw new Error(e.message);
@@ -331,6 +333,15 @@ async function generateQR(data) {
   }
 
 
+  async function getUserData(data) {
+    try {
+        const users = await user.findById(data).select('-cart');
+      return users;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
 module.exports = {
     login,
     register,
@@ -342,5 +353,6 @@ module.exports = {
     merchantOrder,
     changeStatus,
     analytics,
-    generateQR
+    generateQR,
+    getUserData
 }

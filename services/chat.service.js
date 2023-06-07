@@ -19,10 +19,29 @@ async function loadChatFromDatabase(data) {
 async function getChatByUID(data){
 try {
   const uid = data;
-  const chatMessages = await ChatModel.find({uid});
-  return chatMessages;
+  const match = {
+    $or: [
+      { senderId: new RegExp(uid, "i") },
+      { receiverId: new RegExp(uid, "i") },
+    ],
+  };
+
+  const pipeline = [
+    { $match: match },
+    {
+      $project: {
+        senderId: 1,
+        receiverId: 1,
+        message: 1,
+        timestamp: 1,
+
+      },
+    },
+  ];
+
+  return ChatModel.aggregate(pipeline);
 } catch (error) {
-  throw new Error('Failed to load chat messages from the database.');
+  throw new Error('Failed to load chat messages from the database.'+error);
 }
 }
 

@@ -152,3 +152,18 @@ exports.generateQR = async (req, res, next) => {
     next(e);
   }
 };
+
+
+exports.getUserData = async (req, res, next) => {
+  try {
+    const id = req.params.id
+  
+    const users = await userService.getUserData(id);
+    return res.status(200).send({
+      message: "Success",
+      data: users
+  });
+  } catch (e) {
+    next(e);
+  }
+};

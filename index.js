@@ -119,7 +119,7 @@ let formattedyesterday = yesterday.toISOString().split('T')[0];
         if (Array.isArray(price_list)) {
           for (const { date, price_min, price_max } of price_list) {
             const existingProductPrice = await ProductPrice.findOneAndUpdate(
-              { productId: product_id, date: new Date(date) },
+              { productId: fruits[i] },
               {
                 productId: product_id,
                 productName: product_name,
@@ -184,5 +184,5 @@ async function runCronJob() {
 }
 
 // เรียกใช้งานฟังก์ชัน runCronJob()
-//runCronJob();
+runCronJob();
 
