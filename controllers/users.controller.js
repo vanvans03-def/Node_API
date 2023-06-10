@@ -119,6 +119,15 @@ exports.analytics = async (req, res, next) => {
   }
 };
 
+exports.analyticsByDate = async (req, res, next) => {
+  try {
+    const data = req.body;
+    const orders = await userService.analyticsByDate(data);
+    res.json(orders);
+  } catch (e) {
+    next(e);
+  }
+};
 
 exports.generateQR = async (req, res, next) => {
   try {

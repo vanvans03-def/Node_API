@@ -188,3 +188,17 @@ exports.rateProduct = (req, res, next) => {
       res.status(500).json({ error: error.message });
     }
   };
+
+  exports.filterProduct = (req, res, next) => {
+    const data = req.body;
+    productServices.filterProduct(data)
+      .then((product) => {
+        res.status(200).send({
+          message: "filter product successfully",
+          data: product,
+        });
+      })
+      .catch((error) => {
+        next(error);
+      });
+  };

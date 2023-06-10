@@ -19,6 +19,7 @@ router.get('/chat-byUID/',chatController.getChatByUID );
 router.get("/province", provinceController.findAll);
 router.post("/generateQR", userController.generateQR);
 
+router.post("/filter-product",productController.filterProduct);
 router.post("/category", categoryController.create);
 router.get("/category", categoryController.findAll);
 router.get("/category/:id", categoryController.findOne);
@@ -58,6 +59,7 @@ router.get("/order-me/:id", userController.myOrder);
 router.get("/order-merchant/:id", userController.merchantOrder);
 router.post("/change-order-status", userController.changeStatus);
 router.post("/analytics",userController.analytics);
+router.post("/analyticsByDate",userController.analyticsByDate);
 //router.post("/productprices", productpricesController.create);
 //router.get("/productprices", registerstoreController.findAll);
 //router.get("/productprices/:id", registerstoreController.findOne);

@@ -320,6 +320,66 @@ async function analytics(data) {
     }
 }
 
+async function analyticsByDate(data) {
+    try {
+      const { storeId, startDate, endDate } = data;
+      let orders;
+      if(startDate != "" && endDate != ""){
+        const start = new Date(startDate); // แปลงวันที่เริ่มต้นให้กลายเป็นวัตถุของวันที่
+        const end = new Date(endDate); // แปลงวันที่สิ้นสุดให้กลายเป็นวัตถุของวันที่
+        
+         orders = await order.find({
+          orderedAt: {
+            $gte: start, // กรองเอกสารที่มีเวลาสร้างมากกว่าหรือเท่ากับวันที่เริ่มต้น
+            $lte: end, // กรองเอกสารที่มีเวลาสร้างน้อยกว่าหรือเท่ากับวันที่สิ้นสุด
+          },
+        });
+      }else{
+         orders = await order.find({});
+      }
+   
+      
+      let totalEarnings = 0;
+      let categoryId;
+      let categories;
+      let fruitEarnings = 0;
+      let vegetableEarnings = 0;
+      let drtFruitEarnings = 0;
+  
+      for (let i = 0; i < orders.length; i++) {
+        for (let j = 0; j < orders[i].products.length; j++) {
+          let productId = orders[i].products[j].product._id.toString();
+          let products = await product.findById(productId);
+  
+          if (products.storeId.toString() === storeId) {
+            totalEarnings += orders[i].products[j].productSKU * products.productPrice;
+            categoryId = products.category.toString();
+            categories = await category.findById(categoryId);
+            if (categories.categoryName === "Fruit") {
+              fruitEarnings += orders[i].products[j].productSKU * products.productPrice;
+            }
+            if (categories.categoryName === "Vegetable") {
+              vegetableEarnings += orders[i].products[j].productSKU * products.productPrice;
+            }
+            if (categories.categoryName === "Dry Friut") {
+              drtFruitEarnings += orders[i].products[j].productSKU * products.productPrice;
+            }
+          }
+        }
+      }
+  
+      let earnings = {
+        totalEarnings,
+        fruitEarnings,
+        vegetableEarnings,
+        drtFruitEarnings
+      };
+      return earnings;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+  
 
 async function generateQR(data) {
     try {
@@ -354,5 +414,6 @@ module.exports = {
     changeStatus,
     analytics,
     generateQR,
-    getUserData
+    getUserData,
+    analyticsByDate
 }
