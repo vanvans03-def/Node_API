@@ -17,7 +17,9 @@ router.post('/chat',chatController.loadChatFromDatabase );
 router.get('/chat-byUID/',chatController.getChatByUID );
 
 router.get("/province", provinceController.findAll);
+router.post("/provinceNearMe",provinceController.getProvinceNearMe);
 router.post("/generateQR", userController.generateQR);
+
 
 router.post("/filter-product",productController.filterProduct);
 router.post("/category", categoryController.create);

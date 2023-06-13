@@ -50,6 +50,7 @@ async function getCategoryById(params,callback){
 
     category
     .findById(categoryId)
+    .select('-__v')
     .then((response) => {
         if(!response) callback("Not Found Category with Id " + categoryId);
         else callback(null,response);

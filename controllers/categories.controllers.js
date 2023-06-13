@@ -62,7 +62,7 @@ exports.findOne = (req, res, next) => {
             return next(error);
         } else {
             return res.status(200).send({
-                message: "Success",
+                message: "success",
                 data: results,
             });
         }

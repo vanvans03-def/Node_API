@@ -17,3 +17,15 @@ exports.findAll = (req, res, next) => {
     });
   });
 };
+
+
+exports.getProvinceNearMe = async (req, res, next) => {
+  try {
+    const data = req.body;
+  
+    const provinces = await provinceService.getProvinceNearMe(data);
+    res.json(provinces);
+  } catch (e) {
+    next(e);
+  }
+}
