@@ -29,9 +29,10 @@ router.put("/category/:id", categoryController.update);
 router.delete("/category/:id", categoryController.delete);
 
 router.get("/getUserData/:id",userController.getUserData);
+router.post("/updateUserData/",userController.updateUserData);
 router.post("/register", userController.register);
 router.post("/login", userController.login);
-
+router.post("/registerOauth",userController.registerOauth);
 
 router.get("/product/search/", productController.searchProduct);
 router.post("/product", productController.create);

@@ -27,12 +27,45 @@ async function login({ email, password }, callback) {
     }
 }
 
+async function registerOauth(params,callback){
+   
+    let isUserExist = await user.findOne({ email: params.email });
 
+    if (isUserExist) {
+        return callback({
+            message: "Email already registered!"
+        });
+    }
+    
+    let isFullNameExist = await user.findOne({ fullName: params.fullName });
+
+    if (isFullNameExist) {
+        return callback({
+            message: "Username already exists!"
+        });
+    }
+
+    const userSchema = new user(params);
+    
+    const userModelWithProducts = await user.populate(userSchema, { path: "cart.product", select: "-__v -relatedProduct" });
+    if(userModelWithProducts){
+        userModelWithProducts.save()
+        .then((response) => {
+            return callback(null, response);
+        })
+        .catch((error) => {
+            return callback(error);
+        });
+    }else{
+        
+    }
+}
+   
 
 async function register(params, callback) {
     if (params.email === undefined) {
         return callback({
-            message: "Email Reqired!"
+            message: "Email Required!"
         });
     }
 
@@ -41,6 +74,14 @@ async function register(params, callback) {
     if (isUserExist) {
         return callback({
             message: "Email already registered!"
+        });
+    }
+
+    let isFullNameExist = await user.findOne({ fullName: params.fullName });
+
+    if (isFullNameExist) {
+        return callback({
+            message: "Username already exists!"
         });
     }
 
@@ -56,6 +97,7 @@ async function register(params, callback) {
             return callback(error);
         });
 }
+
 
 
 async function addToCart(userData) {
@@ -168,7 +210,7 @@ async function placeOrder(orderData) {
         });
         orderModel = await orderModel.save();
 
-  
+
         return orderModel;
     } catch (e) {
         throw new Error(e.message);
@@ -181,8 +223,8 @@ async function myOrder(id) {
         let orders = await order.find({ userId: id })
             .select('-__v')
             .populate({ path: 'products.product', select: '-__v -relatedProduct' })
-            .sort({orderedAt:-1});
-            
+            .sort({ orderedAt: -1 });
+
         return orders;
     } catch (e) {
         throw new Error(e.message);
@@ -209,7 +251,7 @@ async function merchantOrder(id) {
                 if (orderProducts[j].product.storeId.toString() === id) {
                     let product = orderProducts[j].product;
                     product.statusProduct = orders[i].products[j].statusProductOrder;
-                    
+
                     let productPrice = product.productPrice || 0;
                     let quantity = orders[i].products[j].productSKU || 0;
                     totalPrice += productPrice * quantity;
@@ -217,7 +259,7 @@ async function merchantOrder(id) {
                     productQuantity = orders[i].products[j].productSKU;
                     let modifiedProduct = {
                         ...orderProducts[j].product._doc,
-                        productQuantity : productQuantity,
+                        productQuantity: productQuantity,
                         statusProductOrder: statusProduct
                     };
                     productInOrder.push(modifiedProduct);
@@ -229,7 +271,7 @@ async function merchantOrder(id) {
                     ...orders[i]._doc,
                     products: productInOrder,
                     totalPrice: totalPrice,
-                 
+
                 };
                 merchantOrder.push(modifiedOrder);
             }
@@ -252,17 +294,17 @@ async function changeStatus(data) {
 
         if (!orders) {
             throw new Error('Order not found');
-        }       
-        for(var i = 0 ; i < orders.products.length; i ++){
-            if(  orders.products[i].product._id.toString() === productId){
-                
-                if(orders.products[i].product.storeId.toString() === storeId){
+        }
+        for (var i = 0; i < orders.products.length; i++) {
+            if (orders.products[i].product._id.toString() === productId) {
+
+                if (orders.products[i].product.storeId.toString() === storeId) {
                     orders.products[i].statusProductOrder = status;
                     updatedOrder = await orders.save();
-                }else{
+                } else {
                     return "Data not math";
                 }
-            }   
+            }
         }
         return updatedOrder;
     } catch (error) {
@@ -275,45 +317,45 @@ async function analytics(data) {
     try {
         const { storeId } = data;
         const orders = await order.find({});
-       
+
         let totalEarnings = 0;
-        let categoryId;      
+        let categoryId;
         let categories;
         let fruitEarnings = 0;
         let vegetableEarnings = 0;
         let drtFruitEarnings = 0;
 
-        for(let i = 0 ; i < orders.length ; i++){
-            for(let j = 0 ; j < orders[i].products.length; j++){
+        for (let i = 0; i < orders.length; i++) {
+            for (let j = 0; j < orders[i].products.length; j++) {
                 let productId = orders[i].products[j].product._id.toString();
                 let products = await product.findById(productId);
-                
-                if(products.storeId.toString() === storeId){
+
+                if (products.storeId.toString() === storeId) {
                     totalEarnings += orders[i].products[j].productSKU * products.productPrice;
                     categoryId = products.category.toString();
                     categories = await category.findById(categoryId);
-                    if(categories.categoryName === "Fruit"){
+                    if (categories.categoryName === "Fruit") {
                         fruitEarnings += orders[i].products[j].productSKU * products.productPrice;
-                        
+
                     }
-                    if(categories.categoryName === "Vegetable"){
+                    if (categories.categoryName === "Vegetable") {
                         vegetableEarnings += orders[i].products[j].productSKU * products.productPrice;
                     }
-                    if(categories.categoryName === "Dry Friut"){
+                    if (categories.categoryName === "Dry Friut") {
                         drtFruitEarnings += orders[i].products[j].productSKU * products.productPrice;
                     }
                 }
-               
-             }
+
+            }
         }
-     
-       
-       let earnnings = {
-        totalEarnings,
-        fruitEarnings,
-        vegetableEarnings,
-        drtFruitEarnings
-       }
+
+
+        let earnnings = {
+            totalEarnings,
+            fruitEarnings,
+            vegetableEarnings,
+            drtFruitEarnings
+        }
         return earnnings;
     } catch (error) {
         throw new Error(error.message);
@@ -322,89 +364,133 @@ async function analytics(data) {
 
 async function analyticsByDate(data) {
     try {
-      const { storeId, startDate, endDate } = data;
-      let orders;
-      if(startDate != "" && endDate != ""){
-        const start = new Date(startDate); // แปลงวันที่เริ่มต้นให้กลายเป็นวัตถุของวันที่
-        const end = new Date(endDate); // แปลงวันที่สิ้นสุดให้กลายเป็นวัตถุของวันที่
-        
-         orders = await order.find({
-          orderedAt: {
-            $gte: start, // กรองเอกสารที่มีเวลาสร้างมากกว่าหรือเท่ากับวันที่เริ่มต้น
-            $lte: end, // กรองเอกสารที่มีเวลาสร้างน้อยกว่าหรือเท่ากับวันที่สิ้นสุด
-          },
-        });
-      }else{
-         orders = await order.find({});
-      }
-   
-      
-      let totalEarnings = 0;
-      let categoryId;
-      let categories;
-      let fruitEarnings = 0;
-      let vegetableEarnings = 0;
-      let drtFruitEarnings = 0;
-  
-      for (let i = 0; i < orders.length; i++) {
-        for (let j = 0; j < orders[i].products.length; j++) {
-          let productId = orders[i].products[j].product._id.toString();
-          let products = await product.findById(productId);
-  
-          if (products.storeId.toString() === storeId) {
-            totalEarnings += orders[i].products[j].productSKU * products.productPrice;
-            categoryId = products.category.toString();
-            categories = await category.findById(categoryId);
-            if (categories.categoryName === "Fruit") {
-              fruitEarnings += orders[i].products[j].productSKU * products.productPrice;
-            }
-            if (categories.categoryName === "Vegetable") {
-              vegetableEarnings += orders[i].products[j].productSKU * products.productPrice;
-            }
-            if (categories.categoryName === "Dry Friut") {
-              drtFruitEarnings += orders[i].products[j].productSKU * products.productPrice;
-            }
-          }
+        const { storeId, startDate, endDate } = data;
+        let orders;
+        if (startDate != "" && endDate != "") {
+            const start = new Date(startDate); // แปลงวันที่เริ่มต้นให้กลายเป็นวัตถุของวันที่
+            const end = new Date(endDate); // แปลงวันที่สิ้นสุดให้กลายเป็นวัตถุของวันที่
+
+            orders = await order.find({
+                orderedAt: {
+                    $gte: start, // กรองเอกสารที่มีเวลาสร้างมากกว่าหรือเท่ากับวันที่เริ่มต้น
+                    $lte: end, // กรองเอกสารที่มีเวลาสร้างน้อยกว่าหรือเท่ากับวันที่สิ้นสุด
+                },
+            });
+        } else {
+            orders = await order.find({});
         }
-      }
-  
-      let earnings = {
-        totalEarnings,
-        fruitEarnings,
-        vegetableEarnings,
-        drtFruitEarnings
-      };
-      return earnings;
+
+
+        let totalEarnings = 0;
+        let categoryId;
+        let categories;
+        let fruitEarnings = 0;
+        let vegetableEarnings = 0;
+        let drtFruitEarnings = 0;
+
+        for (let i = 0; i < orders.length; i++) {
+            for (let j = 0; j < orders[i].products.length; j++) {
+                let productId = orders[i].products[j].product._id.toString();
+                let products = await product.findById(productId);
+
+                if (products.storeId.toString() === storeId) {
+                    totalEarnings += orders[i].products[j].productSKU * products.productPrice;
+                    categoryId = products.category.toString();
+                    categories = await category.findById(categoryId);
+                    if (categories.categoryName === "Fruit") {
+                        fruitEarnings += orders[i].products[j].productSKU * products.productPrice;
+                    }
+                    if (categories.categoryName === "Vegetable") {
+                        vegetableEarnings += orders[i].products[j].productSKU * products.productPrice;
+                    }
+                    if (categories.categoryName === "Dry Friut") {
+                        drtFruitEarnings += orders[i].products[j].productSKU * products.productPrice;
+                    }
+                }
+            }
+        }
+
+        let earnings = {
+            totalEarnings,
+            fruitEarnings,
+            vegetableEarnings,
+            drtFruitEarnings
+        };
+        return earnings;
     } catch (error) {
-      throw new Error(error.message);
+        throw new Error(error.message);
     }
-  }
-  
+}
+
 
 async function generateQR(data) {
     try {
-      const { totalAmount, storeTel } = data;
-      const amount =  parseFloat(totalAmount)
-      const payload = generatePayload(storeTel, { amount: amount });
-      return payload;
+        const { totalAmount, storeTel } = data;
+        const amount = parseFloat(totalAmount)
+        const payload = generatePayload(storeTel, { amount: amount });
+        return payload;
     } catch (error) {
-      throw new Error(error.message);
+        throw new Error(error.message);
     }
-  }
+}
 
 
-  async function getUserData(data) {
+async function getUserData(data) {
     try {
         const users = await user.findById(data).select('-cart');
-      return users;
+        return users;
     } catch (error) {
-      throw new Error(error.message);
+        throw new Error(error.message);
     }
-  }
+}
+
+
+async function updateUserData(userData) {
+    try {
+
+  
+        const { fullName, phoneNumber, address, image, id } = userData;
+
+        let userModel;
+
+        // ตรวจสอบว่ามีชื่อซ้ำหรือไม่
+        
+        userModel = await user.findById(id);
+        if(userModel.fullName != fullName){
+            const isUserExist = await user.findOne({ fullName: fullName });
+
+            if (isUserExist) {
+                throw new Error('Error Full Name is already registered!');
+            }
+        }
+       
+            if (image == "") {
+                userModel.address = address;
+                userModel.fullName = fullName;
+                userModel.phoneNumber = phoneNumber;
+    
+            } else {
+                userModel.address = address;
+                userModel.fullName = fullName;
+                userModel.phoneNumber = phoneNumber;
+                userModel.image = image;
+            }
+    
+            userModel = await userModel.save();
+        
+
+       
+        return userModel;
+    } catch (e) {
+        throw new Error(e.message);
+    }
+}
+
 
 module.exports = {
     login,
     register,
+    registerOauth,
     addToCart,
     removeFromCart,
     saveAddress,
@@ -415,5 +501,6 @@ module.exports = {
     analytics,
     generateQR,
     getUserData,
-    analyticsByDate
+    analyticsByDate,
+    updateUserData
 }

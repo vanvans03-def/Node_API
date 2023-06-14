@@ -14,6 +14,18 @@ exports.register = (req, res, next) => {
     });
 };
 
+exports.registerOauth = (req, res, next) => {
+  userService.registerOauth(req.body, (error, results) => {
+      if (error) {
+          return next(error);
+      }
+
+      return res.status(200).send({
+          message: "Success",
+          data: results
+      });
+  });
+};
 exports.login = (req, res, next) => {
     const { email, password } = req.body;
     userService.login({ email, password }, (error, results) => {
@@ -168,6 +180,20 @@ exports.getUserData = async (req, res, next) => {
     const id = req.params.id
   
     const users = await userService.getUserData(id);
+    return res.status(200).send({
+      message: "Success",
+      data: users
+  });
+  } catch (e) {
+    next(e);
+  }
+};
+
+exports.updateUserData = async (req, res, next) => {
+  try {
+    const data = req.body
+  
+    const users = await userService.updateUserData(data);
     return res.status(200).send({
       message: "Success",
       data: users
