@@ -9,15 +9,15 @@ const store = mongoose.model(
                 required: true,
                 unique: true,
             },
-            storeImage: [{
+            storeImage: {
                 type: String
-            }],
-            banner: [{
+            },
+            banner: {
                 type: String
-            }],
-            idcardImage: [{
+            },
+            idcardImage: {
                 type: String
-            }],
+            },
             idcardNo:{
                 type:String
             },
