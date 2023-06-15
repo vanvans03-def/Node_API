@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const moment = require('moment-timezone');
 
 const chatSchema = new mongoose.Schema({
   senderId: {
@@ -15,8 +16,12 @@ const chatSchema = new mongoose.Schema({
   },
   timestamp: {
     type: Date,
-    default: Date.now,
+    default: Date.now, // เก็บวันที่เป็น UTC
   },
+});
+
+chatSchema.virtual('localTimestamp').get(function() {
+  return moment(this.timestamp).tz('Asia/Bangkok'); // แปลงเวลาไปยังเขตเวลาท้องถิ่น (Asia/Bangkok)
 });
 
 const ChatModel = mongoose.model('Chat', chatSchema);
