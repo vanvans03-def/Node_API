@@ -2,7 +2,7 @@ const fruits = ["P13001", "P13002", "P13003", "P13004", "P13005", "P13006", "P13
 const axios = require('axios');
 const { ProductPrice } = require('./models/productprice.model');
 
- const fetchDataAndSaveAl = async() => {
+ const fetchDataAndSaveAll = async() => {
   let date = new Date();
   let yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
