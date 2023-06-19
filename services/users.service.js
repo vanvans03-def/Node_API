@@ -178,7 +178,7 @@ async function saveAddress(userData) {
 async function placeOrder(orderData) {
     try {
 
-        const { cart, totalPrice, address, userId } = orderData;
+        const { cart, totalPrice, address, userId,image } = orderData;
         console.log(orderData);
         let products = [];
 
@@ -206,6 +206,7 @@ async function placeOrder(orderData) {
             totalPrice,
             address,
             userId,
+            image,
             orderedAt: new Date().getTime(),
         });
         orderModel = await orderModel.save();
@@ -276,7 +277,8 @@ async function merchantOrder(id) {
                 merchantOrder.push(modifiedOrder);
             }
         }
-
+    
+        merchantOrder.sort((a, b) => b.orderedAt - a.orderedAt);
         return merchantOrder;
     } catch (e) {
         throw new Error(e.message);

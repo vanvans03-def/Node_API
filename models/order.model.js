@@ -42,6 +42,10 @@ const order = mongoose.model(
         type: Number,
         default: 0,
       },
+      image: {
+        type: String,
+        default: '',
+      },
     }));
 
 

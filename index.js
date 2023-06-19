@@ -32,15 +32,14 @@ app.get("/hello-world", (req, res) => {
 
 app.use(express.json());
 const http = require("http");
-const server = http.createServer();
+const server = http.createServer(app); // ส่ง app เข้าไปใน createServer
 const { Server } = require("socket.io");
 const io = new Server(server);
 
-const PORT = process.env.PORT || 3700
+const PORT = process.env.PORT || 3700;
 
 var clients = {};
 const chatModel = require('./models/chat.model');
-
 
 io.on("connection", (socket) => {
   console.log("user connected");
@@ -70,13 +69,10 @@ io.on("connection", (socket) => {
     }
   });
 
-
   socket.on("disconnect", () => {
     console.log("user disconnected");
   });
 });
-
-
 
 app.use("/uploads", express.static("uploads"));
 app.use("/api", require("./routes/app.routes"));
@@ -85,9 +81,10 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 const apiPort = 4000;
 
-app.listen(apiPort, "0.0.0.0", () => {
-  console.log(`API service running on port ${apiPort}`);
-});
+// ลบบรรทัดนี้ทิ้งเนื่องจากไม่จำเป็นต้องใช้ Express.js ในการฟังเครื่องหมายต่างๆ สำหรับ socket.io
+// app.listen(apiPort, "0.0.0.0", () => {
+//   console.log(`API service running on port ${apiPort}`);
+// });
 
 server.listen(PORT, () => {
   console.log(`socket on ${PORT}`);
@@ -100,7 +97,8 @@ const cron = require('node-cron');
 const { ProductPrice } = require('./models/productprice.model');
 
 let date = new Date();
-let yesterday = new Date(date.getDate() - 1);
+let yesterday = new Date();
+ yesterday.setDate(yesterday.getDate() - 1);
 let formattedDate = date.toISOString().split('T')[0];
 let formattedyesterday = yesterday.toISOString().split('T')[0];
 console.log(formattedyesterday)
@@ -109,7 +107,7 @@ async function fetchDataAndSaveAll() {
     for (let i = 0; i < fruits.length; i++) {
       try {
         const response = await axios.get(
-          `https://dataapi.moc.go.th/gis-product-prices?product_id=${fruits[i]}&from_date=${formattedDate}&to_date=${formattedDate}`
+          `https://dataapi.moc.go.th/gis-product-prices?product_id=${fruits[i]}&from_date=${formattedyesterday}&to_date=${formattedyesterday}`
         );
        
         const { product_id, product_name, category_name, group_name, unit, price_list } = response.data;
@@ -156,7 +154,7 @@ async function checkApiAvailability() {
 }
 
 //นาที ชั่วโมง 
-cron.schedule('14 23 * * *', async () => {
+cron.schedule('58 00 * * *', async () => {
   try {
     const isApiAvailable = await checkApiAvailability();
 

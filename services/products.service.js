@@ -148,7 +148,8 @@ async function searchProducts(productName) {
   const match = {
     $or: [
       { productName: new RegExp(productName, "i") },
-      { productShortDescription: new RegExp(productName, "i") },
+      { productShortDescription: new RegExp(productName, "i")},
+      { productDescription: new RegExp(productName, "i")}
     ],
   };
 
@@ -211,14 +212,32 @@ async function rateProduct(data) {
 
 async function getProductsByStoreId(id, message) {
   try {
-    let products = await product.find({ storeId: id })
+    let products = await product
+      .find({ storeId: id })
       //.populate('category', 'categoryId')
       .select('-__v -relatedProduct');
+
+    products.forEach((product) => {
+      var avgRating = 0;
+      var totalRating = 0;
+      if (product.ratings && product.ratings.length > 0) {
+        for (var i = 0; i < product.ratings.length; i++) {
+          totalRating += product.ratings[i].rating;
+        }
+        avgRating = totalRating / product.ratings.length;
+      }
+      product.avgRating = avgRating;
+    });
+
+    // เรียงผลิตภัณฑ์ตามคะแนนเฉลี่ย (rating) จากสูงไปต่ำ
+    products.sort((a, b) => b.avgRating - a.avgRating);
+
     return { message: message, data: products };
   } catch (e) {
     throw new Error(e.message);
   }
 }
+
 
 
 
