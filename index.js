@@ -53,19 +53,14 @@ io.on("connection", (socket) => {
 
   socket.on("message", async (msg) => {
     console.log(msg);
-
-    // บันทึกประวัติแชทลงในฐานข้อมูลทุกครั้งที่มีการส่งข้อความ
     const chat = new chatModel({
       senderId: msg.senderId,
       receiverId: msg.receiverId,
       message: msg.message
     });
-
     await chat.save();
-
     let targetId = msg.receiverId;
     if (clients[targetId]) {
-      // ส่งข้อความให้ผู้ใช้งานอีกฝั่งที่เข้าร่วมห้องแชท
       clients[targetId].emit("message", msg);
     }
   });
@@ -159,7 +154,7 @@ async function checkApiAvailability() {
 }
 
 //นาที ชั่วโมง 
-cron.schedule('58 00 * * *', async () => {
+cron.schedule('58 04 * * *', async () => {
   try {
     const isApiAvailable = await checkApiAvailability();
 
