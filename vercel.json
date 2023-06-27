@@ -22,7 +22,7 @@
 
     "rewrites": [
       { "source": "/api/(.*)", "destination": "/api/index.js" },
-      { "source": "/socket.io/(.*)", "destination": "node-api-beige.vercel.app/socket.io/$1" }
+      { "source": "/socket.io/(.*)", "destination": "https://node-api-beige.vercel.app/socket.io/$1" }
     ]
       
     
