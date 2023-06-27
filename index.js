@@ -30,17 +30,26 @@ app.get("/hello-world", (req, res) => {
   });
 });
 
+
 app.use(express.json());
 const http = require("http");
 const server = http.createServer();
 const { Server } = require("socket.io");
 const io = new Server(server);
+const Pusher = require('pusher');
 
-const PORT = process.env.PORT || 3700
+const pusher = new Pusher({
+  appId: '1625853',
+  key: '24e5570ed709b635a346',
+  secret: 'ac22245c9f50acb305b9',
+  cluster: 'ap1',
+  useTLS: true, // ถ้าใช้ HTTPS
+});
+
+const PORT = process.env.PORT || 3700;
 
 var clients = {};
 const chatModel = require('./models/chat.model');
-
 
 io.on("connection", (socket) => {
   console.log("user connected");
@@ -62,16 +71,22 @@ io.on("connection", (socket) => {
     let targetId = msg.receiverId;
     if (clients[targetId]) {
       clients[targetId].emit("message", msg);
+
+      // ส่งข้อมูลไปยัง Pusher
+      pusher.trigger('NodeAPI', 'message', {
+        message: msg
+      });
     }
   });
-
 
   socket.on("disconnect", () => {
     console.log("user disconnected");
   });
 });
 
-
+server.listen(PORT, () => {
+  console.log(`socket on ${PORT}`);
+});
 
 
 app.use("/uploads", express.static("uploads"));
@@ -83,10 +98,6 @@ const apiPort = 4000;
 
 app.listen(apiPort, "0.0.0.0", () => {
   console.log(`API service running on port ${apiPort}`);
-});
-
-server.listen(PORT, () => {
-  console.log(`socket on ${PORT}`);
 });
 
 
