@@ -15,17 +15,16 @@
         }
       }
     ],
-   
     "crons": [{
       "path": "/api/cron",
       "schedule": "05 00 * * *"
     }],
 
-    
-      "rewrites": [
-        { "source": "/api/(.*)", "destination": "/api/index.js" },
-        { "source": "/socket.io/(.*)", "destination": "node-api-beige.vercel.app/socket.io/$1" }
-      ]
+    "rewrites": [
+      { "source": "/api/(.*)", "destination": "/api/index.js" },
+      { "source": "/socket.io/(.*)", "destination": "node-api-beige.vercel.app/socket.io/$1" }
+    ]
+      
     
     
   }
