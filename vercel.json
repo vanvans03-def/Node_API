@@ -19,6 +19,14 @@
     "crons": [{
       "path": "/api/cron",
       "schedule": "05 00 * * *"
-    }]
+    }],
+
+    
+      "rewrites": [
+        { "source": "/api/(.*)", "destination": "/api/index.js" },
+        { "source": "/socket.io/(.*)", "destination": "http://localhost:3700/socket.io/$1" }
+      ]
+    
+    
   }
   
