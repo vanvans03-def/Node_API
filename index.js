@@ -1,4 +1,4 @@
-// server.js (สำหรับ API service)
+
 const mongoose = require("mongoose");
 const express = require("express");
 const app = express();
@@ -48,19 +48,36 @@ app.get("/hello-world", (req, res) => {
 var clients = {};
 const chatModel = require('./models/chat.model');
 
-io.on('connection', (socket) => {
-  console.log('user connected');
+io.on("connection", (socket) => {
+  console.log("user connected");
 
-  socket.on('signin', (id) => {
+  socket.on("signin", (id) => {
     console.log(id);
     clients[id] = socket;
     console.log(clients);
   });
 
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
+  socket.on("message", async (msg) => {
+    console.log(msg);
+    const chat = new chatModel({
+      senderId: msg.senderId,
+      receiverId: msg.receiverId,
+      message: msg.message
+    });
+    await chat.save();
+    let targetId = msg.receiverId;
+    if (clients[targetId]) {
+      clients[targetId].emit("message", msg);
+    }
+  });
+
+
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
   });
 });
+
+
 const PORT = process.env.PORT || 3700;
 server.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
@@ -71,7 +88,7 @@ app.use('/uploads', express.static('uploads'));
 
 // ตั้งค่า Reverse Proxy
 app.use('/socket.io', (req, res) => {
-  axios.post('https://node-api-beige.vercel.app/socketio', req.body, {
+  axios.post('https://node-api-beige.vercel.app/socket.io', req.body, {
     headers: req.headers,
   });
   res.end();
