@@ -73,6 +73,7 @@ io.on("connection", (socket) => {
 
 
 
+
 app.use("/uploads", express.static("uploads"));
 app.use("/api", require("./routes/app.routes"));
 app.use(errors.errorHadler);

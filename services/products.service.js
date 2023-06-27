@@ -65,6 +65,9 @@ async function getProducts(params, callback) {
     .find(condition)
     .select('-__v -relatedProduct')
     .then((response) => {
+
+      response = response.filter((product) => product.stockStatus !== "offline");
+      response = response.filter((product) => product.productSKU !== "0");
       // Calculate avgRating for each product
       response.forEach((product) => {
         var avgRating = 0;
@@ -213,9 +216,9 @@ async function rateProduct(data) {
 async function getProductsByStoreId(id, message) {
   try {
     let products = await product
-      .find({ storeId: id })
-      //.populate('category', 'categoryId')
-      .select('-__v -relatedProduct');
+  .find({ storeId: id, stockStatus: { $ne: "offline" } })
+  //.populate('category', 'categoryId')
+  .select('-__v -relatedProduct');
 
     products.forEach((product) => {
       var avgRating = 0;
@@ -244,7 +247,7 @@ async function getProductsByStoreId(id, message) {
 
 async function getDealOfDay() {
   try {
-    let products = await product.find({}).select('-__v -relatedProduct');
+    let products = await product.find({stockStatus: { $ne: "offline" }, productSKU: { $ne: "0" }}).select('-__v -relatedProduct');
     const productprices = await ProductPrice.find({}).select('-__v');
 
     products.sort((a, b) => {
@@ -310,12 +313,12 @@ async function filterProduct(data) {
         const productIds = searchResults.map((product) => product._id);
         // ค้นหาสินค้าที่ตรงกับชื่อในที่ต้องการและร้านค้าที่ตรงกับจังหวัดที่ระบุ
         productModel = await product
-          .find({ _id: { $in: productIds }, storeId: { $in: storeIds }, ...query })
+          .find({ _id: { $in: productIds }, storeId: { $in: storeIds }, productSKU: { $ne: "0" }, stockStatus: { $ne: "offline" }, ...query })
           .select('-__v -relatedProduct');
       } else {
         // ค้นหาสินค้าที่ตรงกับร้านค้าที่ตรงกับจังหวัดที่ระบุ
         productModel = await product
-          .find({ storeId: { $in: storeIds }, ...query })
+          .find({ storeId: { $in: storeIds }, productSKU: { $ne: "0" }, stockStatus: { $ne: "offline" }, ...query })
           .select('-__v -relatedProduct');
       }
     } else {
@@ -325,11 +328,11 @@ async function filterProduct(data) {
         const productIds = searchResults.map((product) => product._id);
         // ค้นหาสินค้าที่ตรงกับชื่อในที่ต้องการ
         productModel = await product
-          .find({ _id: { $in: productIds }, ...query })
+          .find({ _id: { $in: productIds }, productSKU: { $ne: "0" }, stockStatus: { $ne: "offline" }, ...query })
           .select('-__v -relatedProduct');
       } else {
         // ค้นหาสินค้าทั้งหมด
-        productModel = await product.find(query).select('-__v -relatedProduct');
+        productModel = await product.find({stockStatus: { $ne: "offline" }, productSKU: { $ne: "0" },query}).select('-__v -relatedProduct');
       }
     }
 

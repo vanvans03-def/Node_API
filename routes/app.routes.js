@@ -81,29 +81,6 @@ router.delete("/slider/:id",sliderController.delete);
 router.post("/relateProduct", relateProductController.create);
 router.delete("/relateProduct/:id", relateProductController.delete);
 */
-/*
-router.post("/rate-product", authenticationToken, async (req, res) => {
-    try {
-      const { id, rating } = req.body;
-      let product = await Product.findById(id);
-  
-      for (let i = 0; i < product.ratings.length; i++) {
-        if (product.ratings[i].userId == req.user) {
-          product.ratings.splice(i, 1);
-          break;
-        }
-      }
-      const ratingSchema = {
-        userId: req.user,
-        rating,
-      };
-  
-      product.ratings.push(ratingSchema);
-      product = await product.save();
-      res.json(product);
-    } catch (e) {
-      res.status(500).json({ error: e.message });
-    }
-  });*/
+
 
 module.exports = router;

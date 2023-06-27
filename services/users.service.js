@@ -115,7 +115,7 @@ async function addToCart(userData) {
 
         const productIndex = userModel.cart.findIndex(item => item.product && item.product._id && item.product._id.equals(productModel._id));
 
-        console.log(productIndex);
+ 
         if (productIndex !== -1) {
             userModel.cart[productIndex].quantity += 1;
         } else {
