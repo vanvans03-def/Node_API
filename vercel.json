@@ -1,31 +1,19 @@
 {
-    "version": 2,
-    "builds": [
-      {
-        "src": "index.js",
-        "use": "@vercel/node"
-      }
-    ],
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "index.js",
-        "headers": {
-          "x-vercel-cron": "1"
-        }
-      }
-    ],
-    "crons": [{
+  "version": 2,
+  "builds": [
+    {
+      "src": "index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "crons": [
+    {
       "path": "/api/cron",
       "schedule": "05 00 * * *"
-    }],
-
-    "rewrites": [
-      { "source": "/api/(.*)", "destination": "/api/index.js" },
-      { "source": "/socket.io/(.*)", "destination": "https://node-api-beige.vercel.app/socket.io/$1" }
-    ]
-      
-    
-    
-  }
-  
+    }
+  ],
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index.js" },
+    { "source": "/socket.io/(.*)", "destination": "https://node-api-beige.vercel.app/socket.io/$1", "headers": { "Upgrade": "websocket" } }
+  ]
+}
