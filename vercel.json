@@ -6,28 +6,14 @@
       "use": "@vercel/node"
     }
   ],
-  "crons": [
+  "routes": [
     {
-      "path": "/api/cron",
-      "schedule": "05 00 * * *"
-    }
-  ],
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index.js" },
-    { "source": "/socket.io/(.*)", "destination": "https://node-api-beige.vercel.app/socket.io/$1", "headers": { "Upgrade": "websocket" } }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" }
-      ]
+      "src": "/socket.io/(.*)",
+      "dest": "/socketio.js"
     },
     {
-      "source": "https://node-api-beige.vercel.app/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" }
-      ]
-    }  
-]
+      "src": "/(.*)",
+      "dest": "index.js"
+    }
+  ]
 }

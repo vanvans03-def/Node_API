@@ -1,49 +1,49 @@
 // server.js (สำหรับ API service)
-const mongoose = require("mongoose");
-const express = require("express");
+const express = require('express');
 const app = express();
-const { MONGO_DB_CONFIG } = require("./config/app.config");
-const errors = require("./middleware/errors.js");
-const swaggerUi = require("swagger-ui-express");
-const swaggerDocument = require("./swagger.json");
-const { category } = require("./models/category.model");
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require('socket.io');
+const io = new Server(server);
+const axios = require('axios');
 
-mongoose.Promise = global.Promise;
-// server.js
-const { createServer } = require('http');
-const { api } = require('./api');
+const PORT = process.env.PORT || 3000;
 
-const server = createServer((req, res) => {
-  api(req, res);
-});
+var clients = {};
+const chatModel = require('./models/chat.model');
 
-server.listen();
+io.on('connection', (socket) => {
+  console.log('user connected');
 
-mongoose
-  .connect(MONGO_DB_CONFIG.DB, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(
-    () => {
-      console.log("Database Connected");
-    },
-    (error) => {
-      console.log("Database can't be connected: " + error);
-    }
-  );
+  socket.on('signin', (id) => {
+    console.log(id);
+    clients[id] = socket;
+    console.log(clients);
+  });
 
-app.get("/hello-world", (req, res) => {
-  res.json({
-    hi: "hello world123",
-    des: "des",
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
   });
 });
 
-app.use("/uploads", express.static("uploads"));
-app.use("/api", require("./routes/app.routes"));
+server.listen(PORT, () => {
+  console.log(`Server is listening on port ${PORT}`);
+});
+
+app.use(express.json());
+app.use('/uploads', express.static('uploads'));
+
+// ตั้งค่า Reverse Proxy
+app.use('/socket.io', (req, res) => {
+  axios.post('https://your-vercel-app.vercel.app/socketio', req.body, {
+    headers: req.headers,
+  });
+  res.end();
+});
+
+app.use('/api', require('./routes/app.routes'));
 app.use(errors.errorHadler);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 const apiPort = process.env.PORT || 4000;
 
