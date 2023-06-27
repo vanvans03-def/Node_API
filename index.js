@@ -35,7 +35,7 @@ app.use('/uploads', express.static('uploads'));
 
 // ตั้งค่า Reverse Proxy
 app.use('/socket.io', (req, res) => {
-  axios.post('https://your-vercel-app.vercel.app/socketio', req.body, {
+  axios.post('https://node-api-beige.vercel.app/socketio', req.body, {
     headers: req.headers,
   });
   res.end();
