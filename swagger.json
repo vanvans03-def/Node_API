@@ -1,0 +1,298 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Flutter Project KMUTNB",
+        "description": "Application for Buying and Selling Agricultural Products - Flutter/NODE-API",
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "host": "localhost:4000",
+    "basePath": "/",
+    "tags": [
+        {
+            "name": "Product",
+            "description": "Products API"
+        },
+        {
+            "name": "Category",
+            "description": "Category API"
+        },
+        {
+            "name": "Users",
+            "description": "Users API"
+        }
+    ],
+    "schemes": [
+        "http"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/api/register":{
+            "post":{
+                "tags":["User"],
+                "summary":"Register API",
+                "parameters":[
+                    {
+                        "name":"RegisterModel",
+                        "in":"body",
+                        "description":"User Registration",
+                        "required":true,
+                        "type":"object",
+                        "schema":{
+                            "$ref":"#/definitions/RegisterModel"
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "schema":{
+                            "$ref":"#/definitions/ServiceResponse"
+                        }
+
+                    }
+                }
+            }
+        },
+        "/api/login":{
+            "post":{
+                "tags":["User"],
+                "summary":"Login API",
+                "parameters":[
+                    {
+                        "name":"LoginModel",
+                        "in":"body",
+                        "description":"User Login API",
+                        "required":true,
+                        "type":"object",
+                        "schema":{
+                            "$ref":"#/definitions/LoginModel"
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "schema":{
+                            "$ref":"#/definitions/ServiceResponse"
+                        }
+
+                    }
+                }
+            }
+        },
+        "/api/category": {
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Get all Categories",
+                "parameters": [
+                    {
+                        "name": "categoryName",
+                        "in": "query",
+                        "required": false,
+                        "description": "Category Name",
+                        "type": "string"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "description": "Page Number",
+                        "type": "integer",
+                        "default": 1
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": false,
+                        "description": "Page Size",
+                        "type": "integer",
+                        "default": 10
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ServiceResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Create Category API",
+                "parameters": [
+                    {
+                        "name": "categoryName",
+                        "in": "formData",
+                        "description": "Category Name",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "categoryDescription",
+                        "in": "formData",
+                        "description": "Category Description",
+                        "type": "string"
+                    },
+                    {
+                        "name": "categoryImage",
+                        "in": "formData",
+                        "description": "Category Image",
+                        "type": "file"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ServiceResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/category/{id}": {
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "Category Id",
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Category Details based on Category Id",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ServiceResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Update Category API",
+                "parameters": [
+                    {
+                        "name": "categoryName",
+                        "in": "formData",
+                        "description": "Category Name",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "categoryDescription",
+                        "in": "formData",
+                        "description": "Category Description",
+                        "type": "string"
+                    },
+                    {
+                        "name": "categoryImage",
+                        "in": "formData",
+                        "description": "Category Image",
+                        "type": "file"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ServiceResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Delete Category API",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ServiceResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Category": {
+            "required": [
+                "categoryName",
+                "_id"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "integer",
+                    "uniqueItems": true
+                },
+                "categoryName": {
+                    "type": "string"
+                },
+                "categoryDescription": {
+                    "type": "string"
+                },
+                "categoryImage": {
+                    "type": "string"
+                }
+            }
+        },
+        "ServiceResponse": {
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Category"
+                    }
+                }
+            }
+        },
+        "RegisterModel":{
+            "required":[
+               "fullName",
+               "email",
+               "password"
+                
+            ],
+            "produces":{
+                "fullName":{
+                    "type":"string"
+                },
+                "email":{
+                    "type":"string"
+                },
+                "password":{
+                    "type":"string"
+                }
+            }
+        }
+    }
+}
