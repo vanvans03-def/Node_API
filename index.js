@@ -139,12 +139,12 @@ async function checkApiAvailability() {
   return false;
 }
 
-cron.schedule('44 1 * * *', async () => {
+cron.schedule('56 18 * * *', async () => {
   try {
     const isApiAvailable = await checkApiAvailability();
 
     if (isApiAvailable) {
-        await ProductPrice.deleteMany({});
+      await ProductPrice.deleteMany({});
       console.log('Old data deleted successfully');
       await fetchDataAndSaveAll();
       console.log('Data fetching and saving complete');
