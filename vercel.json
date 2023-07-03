@@ -7,10 +7,17 @@
     }
   ],
   "routes": [
-   
     {
       "src": "/(.*)",
-      "dest": "index.js"
+      "dest": "index.js",
+      "headers": {
+        "x-vercel-cron": "1"
+      }
     }
-  ]
+  ],
+ 
+  "crons": [{
+    "path": "/api/cron",
+    "schedule": "24 16 * * *"
+  }]
 }
