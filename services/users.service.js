@@ -189,7 +189,7 @@ async function saveAddress(userData) {
 async function placeOrder(orderData) {
     try {
 
-        const { cart, totalPrice, address, userId, image } = orderData;
+        const { cart, totalPrice, address, userId, image,deliveryType } = orderData;
 
         let products = [];
         let orderMerchantdata = [];
@@ -222,7 +222,9 @@ async function placeOrder(orderData) {
             userId,
             image,
             orderedAt: new Date().getTime(),
+            deliveryType,
         });
+        console.log(orderModel);
         orderModel = await orderModel.save();
 
         let dataforPdf = removeDuplicates(orderMerchantdata)

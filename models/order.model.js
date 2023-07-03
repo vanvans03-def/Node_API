@@ -46,6 +46,10 @@ const order = mongoose.model(
         type: String,
         default: '',
       },
+      deliveryType:{
+        type:String,
+        required: true,
+      }
     }));
 
 
