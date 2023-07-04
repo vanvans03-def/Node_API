@@ -8,7 +8,7 @@
     "start": "node index.js"
   },
   "engines": {
-    "node": "^14 || ^16"
+    "node": "^14 || ^18"
   },
   "author": "Teera,Sapharat",
   "license": "vanvans03-def",
