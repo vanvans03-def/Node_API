@@ -21,20 +21,22 @@ async function getProductPriceById(productId) {
   }
 }
 
-
-async function searchProductPrices(productName) {
+async function searchProductPrices(productName, productType) {
   try {
+
     const productPrices = await ProductPrice.find({
       $or: [
         { productName: { $regex: productName, $options: 'i' } }
-      ]
+      ],
+      'unit': productType  // เพิ่มเงื่อนไขในการกรองด้วย 'unit' เท่ากับ 'productType'
     });
-   
+
     return productPrices;
   } catch (error) {
     throw new Error('Failed to search product prices');
   }
 }
+
 
 module.exports = {
   getAllProductPrices,
