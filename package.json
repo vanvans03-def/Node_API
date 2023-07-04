@@ -7,6 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
   },
+  "engines": {
+    "node": "^14 || ^16"
+  },
   "author": "Teera,Sapharat",
   "license": "vanvans03-def",
   "dependencies": {
