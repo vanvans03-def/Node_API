@@ -7,6 +7,16 @@ const mongoose = require('mongoose');
 const { order } = require('../models/order.model');
 const categoriesService = require("../services/categories.service");
 const generatePayload = require('promptpay-qr')
+const { store } = require("../models/store.model");
+
+
+const ejs = require('ejs');
+const nodemailer = require('nodemailer');
+const htmlToPdf = require('html-pdf-node');
+
+
+
+
 
 async function login({ email, password }, callback) {
     const userModel = await user.findOne({ email }).select("+password -__v -relatedProduct").lean();
@@ -27,8 +37,8 @@ async function login({ email, password }, callback) {
     }
 }
 
-async function registerOauth(params,callback){
-   
+async function registerOauth(params, callback) {
+
     let isUserExist = await user.findOne({ email: params.email });
 
     if (isUserExist) {
@@ -36,7 +46,7 @@ async function registerOauth(params,callback){
             message: "Email already registered!"
         });
     }
-    
+
     let isFullNameExist = await user.findOne({ fullName: params.fullName });
 
     if (isFullNameExist) {
@@ -46,21 +56,21 @@ async function registerOauth(params,callback){
     }
 
     const userSchema = new user(params);
-    
+
     const userModelWithProducts = await user.populate(userSchema, { path: "cart.product", select: "-__v -relatedProduct" });
-    if(userModelWithProducts){
+    if (userModelWithProducts) {
         userModelWithProducts.save()
-        .then((response) => {
-            return callback(null, response);
-        })
-        .catch((error) => {
-            return callback(error);
-        });
-    }else{
-        
+            .then((response) => {
+                return callback(null, response);
+            })
+            .catch((error) => {
+                return callback(error);
+            });
+    } else {
+
     }
 }
-   
+
 
 async function register(params, callback) {
     if (params.email === undefined) {
@@ -115,7 +125,7 @@ async function addToCart(userData) {
 
         const productIndex = userModel.cart.findIndex(item => item.product && item.product._id && item.product._id.equals(productModel._id));
 
- 
+
         if (productIndex !== -1) {
             userModel.cart[productIndex].quantity += 1;
         } else {
@@ -174,14 +184,15 @@ async function saveAddress(userData) {
         throw new Error(e.message);
     }
 }
+
 //order product
 async function placeOrder(orderData) {
     try {
 
-        const { cart, totalPrice, address, userId,image } = orderData;
-        console.log(orderData);
-        let products = [];
+        const { cart, totalPrice, address, userId, image,deliveryType } = orderData;
 
+        let products = [];
+        let orderMerchantdata = [];
         for (let i = 0; i < cart.length; i++) {
             //console.log(cart[i].product._id);
             let productModel = await product.findById(cart[i].product._id);
@@ -191,7 +202,10 @@ async function placeOrder(orderData) {
 
                 products.push({ product: productModel, productSKU: cart[i].quantity });
 
+                let data = await merchantOrder(productModel.storeId.toString());
+                orderMerchantdata.push(data[0]); 
                 await productModel.save();
+
             } else {
                 throw new Error(`${productModel.productName} is out of stock!`);
             }
@@ -208,9 +222,16 @@ async function placeOrder(orderData) {
             userId,
             image,
             orderedAt: new Date().getTime(),
+            deliveryType,
         });
+        console.log(orderModel);
         orderModel = await orderModel.save();
 
+        let dataforPdf = removeDuplicates(orderMerchantdata)
+
+        for (var i = 0; i < dataforPdf.length; i++) {
+            sendMail(dataforPdf[i]);
+        }
 
         return orderModel;
     } catch (e) {
@@ -218,18 +239,99 @@ async function placeOrder(orderData) {
     }
 }
 
-
-async function myOrder(id) {
+async function sendMail(dataforPdf) {
     try {
-        let orders = await order.find({ userId: id })
-            .select('-__v')
-            .populate({ path: 'products.product', select: '-__v -relatedProduct' })
-            .sort({ orderedAt: -1 });
+      
+        const storeModel = await store.findById(dataforPdf.products[0].storeId.toString())
+      
+        const users = await user.findById(storeModel.user).select('-cart');
+       
+        const pdfBuffer = await generatePdf(dataforPdf);
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'defoko13@gmail.com',
+                pass: 'hslcmkvglavexqij',
+            },
+        });
+        let emailStore = users.email;
+        console.log(emailStore);
+        const mailOptions = {
+            from: 'defoko13@gmail.com',
+            //to: emailStore,
+            to: 'teerahitchana@gmail.com',
+            subject: 'มีออเดอร์มาใหม่',
+            text: 'มีคำสั่งซื้อเข้ามาใหม่',
+            attachments: [
+                {
+                    filename: 'generated.pdf',
+                    content: pdfBuffer,
+                },
+            ],
+        };
 
-        return orders;
-    } catch (e) {
-        throw new Error(e.message);
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log('Error sending email:', error);
+                return res.status(400).json({
+                    RespCode: 400,
+                    RespMessage: 'Bad Request',
+                    RespError: error,
+                });
+            } else {
+                console.log('Email sent:', info.response);
+                return res.status(200).json({
+                    RespCode: 200,
+                    RespMessage: 'Email sent successfully',
+                });
+            }
+        });
+    } catch (error) {
+        console.log('Error generating PDF:', error);
+        return res.status(500).json({
+            RespCode: 500,
+            RespMessage: 'Internal Server Error',
+            RespError: error,
+        });
     }
+}
+
+async function generatePdf(order) {
+    const users = await user.findById(order.userId).select('-cart');
+
+    const modifiedOrder = {
+        products: order.products.map((product) => ({
+            productName: product.productName,
+            productPrice: product.productPrice,
+            productQuantity: product.productQuantity,
+        })),
+        totalPrice: order.totalPrice,
+        address: order.address,
+        userId: users.fullName,
+        orderedAt: order.orderedAt
+    };
+
+    const htmlPdf = await ejs.renderFile(
+        "./views/layout.html.ejs",
+        { rows: modifiedOrder.products, order: modifiedOrder },
+        { async: true }
+    );
+
+    const options = { format: 'A4' };
+    const file = { content: htmlPdf };
+
+    const pdfBuffer = await htmlToPdf.generatePdf(file, options);
+    return pdfBuffer;
+}
+
+
+
+function removeDuplicates(arr) {
+    var clean = arr.filter((item, index, self) =>
+        index === self.findIndex((t) => t._id.toString() === item._id.toString())
+    );
+
+    return clean;
 }
 
 //merchant get order
@@ -277,7 +379,7 @@ async function merchantOrder(id) {
                 merchantOrder.push(modifiedOrder);
             }
         }
-    
+
         merchantOrder.sort((a, b) => b.orderedAt - a.orderedAt);
         return merchantOrder;
     } catch (e) {
@@ -285,6 +387,20 @@ async function merchantOrder(id) {
     }
 }
 
+
+
+async function myOrder(id) {
+    try {
+        let orders = await order.find({ userId: id })
+            .select('-__v')
+            .populate({ path: 'products.product', select: '-__v -relatedProduct' })
+            .sort({ orderedAt: -1 });
+
+        return orders;
+    } catch (e) {
+        throw new Error(e.message);
+    }
+}
 
 async function changeStatus(data) {
     try {
@@ -450,38 +566,38 @@ async function getUserData(data) {
 async function updateUserData(userData) {
     try {
 
-  
+
         const { fullName, phoneNumber, address, image, id } = userData;
 
         let userModel;
 
         // ตรวจสอบว่ามีชื่อซ้ำหรือไม่
-        
+
         userModel = await user.findById(id);
-        if(userModel.fullName != fullName){
+        if (userModel.fullName != fullName) {
             const isUserExist = await user.findOne({ fullName: fullName });
 
             if (isUserExist) {
                 throw new Error('Error Full Name is already registered!');
             }
         }
-       
-            if (image == "") {
-                userModel.address = address;
-                userModel.fullName = fullName;
-                userModel.phoneNumber = phoneNumber;
-    
-            } else {
-                userModel.address = address;
-                userModel.fullName = fullName;
-                userModel.phoneNumber = phoneNumber;
-                userModel.image = image;
-            }
-    
-            userModel = await userModel.save();
-        
 
-       
+        if (image == "") {
+            userModel.address = address;
+            userModel.fullName = fullName;
+            userModel.phoneNumber = phoneNumber;
+
+        } else {
+            userModel.address = address;
+            userModel.fullName = fullName;
+            userModel.phoneNumber = phoneNumber;
+            userModel.image = image;
+        }
+
+        userModel = await userModel.save();
+
+
+
         return userModel;
     } catch (e) {
         throw new Error(e.message);

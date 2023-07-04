@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    table {
+        border: 1px solid black;
+    }
+
+    table tr{
+        border: 1px solid black;
+    }
+
+    table th{
+        border: 1px solid black;
+        padding: 1rem;
+    }
+    table td{
+        border: 1px solid black;
+        padding: 1rem;
+    }
+</style>
+<body>
+    <h3>Order</h3>
+    <table>
+        <tr>
+            <th>ลำดับ</th>
+            <th>ชื่อสินค้า</th>
+            <th>ราคาสินค้า</th>
+            <th>จำนวน</th>
+            <th>ราคารวม</th>
+        </tr>
+        <% for (var i = 0; i < rows.length; i++) { %>
+            <tr>
+                <td><%= i + 1 %></td>
+                <td><%= rows[i].productName %></td>
+                <td><%= rows[i].productPrice %></td>
+                <td><%= rows[i].productQuantity %></td>
+                <td><%= rows[i].productPrice * rows[i].productQuantity %></td>
+            </tr>
+        <% } %>
+    </table>
+    <p>ที่อยู่: <%= order.address %></p>
+    <p>ผู้รับสินค้า: <%= order.userId %></p>
+    <p>วันที่สั่งซื้อ: <%= new Date(order.orderedAt).toLocaleDateString() %></p>
+</body>
+</html>
