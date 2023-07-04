@@ -20,8 +20,8 @@ async function findById(req, res) {
 }
 
 async function searchProductPrices(req, res) {
-  const { productName } = req.query;
-  const { productType } = req.body;
+  const { productName,productType } = req.query;
+
   try {
     const productPrices = await ProductService.searchProductPrices(productName,productType);
     res.status(200).json(productPrices);
