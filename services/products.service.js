@@ -247,7 +247,7 @@ async function getProductsByStoreId(id, message) {
 
 async function getDealOfDay() {
   try {
-    let products = await product.find({stockStatus: { $ne: "offline" }, productSKU: { $ne: "0" }}).select('-__v -relatedProduct');
+    let products = await product.find({ productSalePrice: { $ne: "null" },stockStatus: { $ne: "offline" }, productSKU: { $ne: "0" }}).select('-__v -relatedProduct');
     const productprices = await ProductPrice.find({}).select('-__v');
 
     products.sort((a, b) => {
@@ -280,6 +280,7 @@ async function getDealOfDay() {
     throw new Error(error.message);
   }
 };
+
 
 async function filterProduct(data) {
   try {
