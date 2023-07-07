@@ -230,7 +230,7 @@ async function placeOrder(orderData) {
         let dataforPdf = removeDuplicates(orderMerchantdata)
 
         for (var i = 0; i < dataforPdf.length; i++) {
-            sendMail(dataforPdf[i]);
+            //sendMail(dataforPdf[i]);
         }
 
         return orderModel;
@@ -436,10 +436,10 @@ async function analytics(data) {
         const { storeId } = data;
         const orders = await order.find({});
 
-        let totalEarnings = 0;
-        let categoryId;
-        let categories;
-        let fruitEarnings = 0;
+        let totalEarnings = 0; //ยอดรวม
+        let categoryId; //ไอดีของแต่ละ category
+        let categories; 
+        let fruitEarnings = 0; 
         let vegetableEarnings = 0;
         let drtFruitEarnings = 0;
 
@@ -469,8 +469,8 @@ async function analytics(data) {
 
 
         let earnnings = {
-            totalEarnings,
-            fruitEarnings,
+            totalEarnings,//110
+            fruitEarnings,//110
             vegetableEarnings,
             drtFruitEarnings
         }
